@@ -1,0 +1,25 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700');
+
+// Font Awesome
+@import '~@fortawesome/fontawesome-free/scss/brands';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/functions';
+@import '~admin-lte/build/scss/bootstrap-variables';
+@import '~bootstrap/scss/bootstrap';
+
+// Vendor
+@import '~admin-lte/build/scss/AdminLTE-raw';
+@import '~bootstrap-vue';
+@import '~overlayscrollbars/css/OverlayScrollbars.min';
+@import '~icheck-bootstrap';
+
+// Custom
+@import 'custom';
