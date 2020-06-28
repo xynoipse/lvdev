@@ -1,7 +1,17 @@
 import Vue from 'vue';
+
+// Plugins
+import { Plugin as Fragment } from 'vue-fragment'
 import BootstrapVue from 'bootstrap-vue';
 
-Vue.use(BootstrapVue);
+const plugins = [
+  Fragment,
+  BootstrapVue
+]
+
+plugins.forEach(plugin => {
+  Vue.use(plugin)
+});
 
 // Global components
 import * as Contents from './content';

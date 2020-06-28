@@ -31,6 +31,7 @@
         "sass-loader": "^8.0.0",
         "sweetalert2": "^9.14.4",
         "vue": "^2.5.17",
+        "vue-fragment": "^1.5.1",
         "vue-router": "^3.3.2",
         "vue-template-compiler": "^2.6.10",
         "vuex": "^3.4.0",
