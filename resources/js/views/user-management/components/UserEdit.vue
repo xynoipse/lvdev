@@ -1,18 +1,18 @@
 <template>
   <b-modal
-    id="user-create"
-    title="Create User"
+    id="user-edit"
+    :title="`Edit User - ${data.name}`"
     :no-close-on-backdrop="disabled"
     :no-close-on-esc="disabled"
     hide-header-close
     hide-footer
     centered
   >
-    <form @submit.stop.prevent="store">
-      <user-form ref="form" />
+    <form @submit.stop.prevent="update">
+      <user-form ref="form" :data="data" nopwd />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
-        <b-button type="submit" variant="primary" :disabled="disabled">Add User</b-button>
+        <b-button type="submit" variant="primary" :disabled="disabled">Update User</b-button>
       </div>
     </form>
   </b-modal>
@@ -25,9 +25,12 @@ import { toastLoader, toastSuccess, toastError } from '@/utils/alert';
 import UserForm from './UserForm';
 
 export default {
-  name: 'UserCreate',
+  name: 'UserEdit',
   components: {
     UserForm
+  },
+  props: {
+    data: {}
   },
   data() {
     return {
@@ -35,31 +38,29 @@ export default {
     };
   },
   methods: {
-    async store() {
+    async update() {
       const form = this.$refs.form;
+      const id = this.data.id;
       const data = form.$data.user;
-
       form.clearErrors();
       this.toggleDisable();
-
-      toastLoader('Creating User...');
-      const [err, res] = await to(UserResource.store(data));
+      toastLoader('Updating User...');
+      const [err, res] = await to(UserResource.update(id, data));
       if (err) {
         form.$data.errors = err.response.data.errors;
         return this.toggleDisable();
       }
-
-      this.$emit('store');
+      this.$emit('update');
       this.toggleDisable();
       this.close();
-      toastSuccess('User successfully created!');
+      toastSuccess('User successfully updated!');
     },
     toggleDisable() {
       this.disabled = !this.disabled;
       this.$refs.form.toggleDisable();
     },
     close() {
-      this.$bvModal.hide('user-create');
+      this.$bvModal.hide('user-edit');
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();

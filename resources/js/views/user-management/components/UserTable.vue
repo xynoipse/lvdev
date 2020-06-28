@@ -1,5 +1,5 @@
 <template>
-  <b-table striped hover :fields="fields" :items="data" :busy="busy">
+  <b-table :fields="fields" :items="data" :busy="busy" striped hover responsive>
     <template v-slot:table-busy>
       <div class="text-center">
         <b-spinner class="align-middle"></b-spinner>
@@ -9,7 +9,7 @@
 
     <template v-slot:cell(actions)="row">
       <div class="btn-actions">
-        <b-button variant="primary" size="sm" @click="edit">
+        <b-button variant="primary" size="sm" v-b-modal.user-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>
           Edit
         </b-button>
@@ -24,6 +24,7 @@
 
 <script>
 import UserResource from '@/api/user';
+import to from '@/utils/async-await';
 import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
 import { enableRow, disableRow } from '@/utils/row';
 
@@ -44,7 +45,10 @@ export default {
     };
   },
   methods: {
-    async edit() {},
+    edit(row) {
+      const user = row.item;
+      this.$emit('edit', user);
+    },
     async destroy(row, target) {
       const { index, item } = row;
 
@@ -54,10 +58,12 @@ export default {
         disableRow(target);
         toastLoader('Deleting User...');
 
-        const res = await UserResource.destroy(item.id);
-        this.$emit('onChange');
-        this.data.splice(index, 1);
-        toastSuccess('User successfully deleted');
+        const [err] = await to(UserResource.destroy(item.id));
+        if (!err) {
+          this.$emit('onChange');
+          this.data.splice(index, 1);
+          toastSuccess('User successfully deleted');
+        }
         enableRow(target);
       }
     }
@@ -66,7 +72,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.table-responsive {
+  margin-bottom: 0;
+}
 .btn-actions {
-  float: right;
+  display: flex;
+  justify-content: flex-end;
+  .btn {
+    width: 4.5rem;
+    &:first-child {
+      margin-right: 5px;
+    }
+  }
 }
 </style>

@@ -2,6 +2,8 @@
   <content-wrapper>
     <content-header title="Users" parent="User Management">
       <b-button variant="primary" v-b-modal.user-create>Add User</b-button>
+      <user-create @store="reloadData" />
+      <user-edit :data="user" @update="reloadData" />
     </content-header>
     <content-body>
       <b-card no-body>
@@ -9,11 +11,10 @@
           <b-card-title title="User List" />
         </b-card-header>
         <b-card-body class="p-0">
-          <user-table :data="data.data" :busy="loading" @onChange="reloadData" />
+          <user-table :data="data.data" :busy="loading" @onChange="reloadData" @edit="editUser" />
         </b-card-body>
       </b-card>
       <pagination :data="data" @pagination-change-page="getUsers" :limit="4" align="center" />
-      <user-create />
     </content-body>
   </content-wrapper>
 </template>
@@ -29,6 +30,7 @@ export default {
   data() {
     return {
       data: {},
+      user: {},
       page: 1,
       loading: true
     };
@@ -49,6 +51,9 @@ export default {
         this.reloadData();
       }
       this.data = res;
+    },
+    editUser(e) {
+      this.user = e;
     }
   },
   created() {
