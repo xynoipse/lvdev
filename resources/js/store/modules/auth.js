@@ -6,7 +6,8 @@ const state = {
   auth: false,
   id: null,
   name: null,
-  roles: [],
+  roles: null,
+  permissions: null,
 };
 
 const mutations = {
@@ -21,6 +22,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles;
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions;
   },
 };
 
@@ -46,11 +50,12 @@ const actions = {
 
       const { data } = res;
       if (!data) return reject('Please login again.');
-      const { id, name, role } = data;
+      const { id, name, role, permissions } = data;
       commit('SET_AUTH', isAuth());
       commit('SET_ID', id);
       commit('SET_NAME', name);
       commit('SET_ROLES', role);
+      commit('SET_PERMISSIONS', permissions);
 
       resolve(data);
     });
@@ -64,6 +69,10 @@ const actions = {
 
       commit('SET_AUTH', false);
       commit('SET_ID', null);
+      commit('SET_NAME', null);
+      commit('SET_ROLES', null);
+      commit('SET_PERMISSIONS', null);
+
       removeAuth();
       resolve();
     });

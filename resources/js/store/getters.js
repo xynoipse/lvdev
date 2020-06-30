@@ -4,6 +4,7 @@ const getters = {
   id: state => state.auth.id,
   name: state => state.auth.name,
   roles: state => state.auth.roles,
+  permissions: state => state.auth.permissions,
 
   // app getters
   sidebar: state => state.app.sidebar,
