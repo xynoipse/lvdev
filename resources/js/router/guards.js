@@ -2,6 +2,7 @@ import store from '@/store';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { isAuth, setAuth } from '@/utils/auth';
+import { hasRole, hasPermission } from '@/utils/role-permission';
 import handle from '@/utils/async-await';
 
 const title = 'Lvdev';
@@ -25,14 +26,23 @@ export async function beforeGuards(to, from, next) {
       next({ name: 'dashboard' });
     } else {
       const id = store.getters.id;
-      if (id) {
-        next();
-      } else {
+      const { role, permission } = to.meta;
+
+      if (!id) {
         const [err] = await handle(store.dispatch('auth/user'));
         if (err) {
           await handle(store.dispatch('auth/resetAuth'));
           next({ name: 'login' });
-        };
+        }
+      }
+
+      if (role || permission) {
+        if (role && hasRole(role) || permission && hasPermission(permission)) {
+          next();
+        } else {
+          next({ name: 'dashboard' });
+        }
+      } else {
         next();
       }
     }
