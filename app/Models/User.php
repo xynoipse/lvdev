@@ -43,4 +43,15 @@ class User extends Authenticatable
      * @var string
      */
     protected $guard_name = 'api';
+
+    /**
+     * Check if user role is admin/superadmin
+     * @return bool
+     */
+    public function isAdmin($super = null)
+    {
+        $admin = ['superadmin', 'admin'];
+        if ($super == 'super') $admin = 'superadmin';
+        return $this->hasRole($admin);
+    }
 }

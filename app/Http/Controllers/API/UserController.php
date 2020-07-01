@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PermissionResource;
 use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -21,7 +23,7 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\UserResource
      */
     public function index(Request $request)
     {
@@ -38,7 +40,7 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\UserResource
      */
     public function store(Request $request)
     {
@@ -69,7 +71,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return new UserResource($user);
     }
 
     /**
@@ -77,7 +79,7 @@ class UserController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\UserResource
      */
     public function update(Request $request, User $user)
     {
@@ -108,5 +110,39 @@ class UserController extends Controller
     {
         $user->delete();
         return 204;
+    }
+
+    /**
+     * Get all user permissions
+     *
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\Resources\Json\JsonResource
+     */
+    public function permissions(User $user)
+    {
+        return new JsonResource([
+            'user' => PermissionResource::collection($user->getDirectPermissions()),
+            'role' => PermissionResource::collection($user->getPermissionsViaRoles()),
+        ]);
+    }
+
+    /**
+     * Update user direct permissions
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \App\Http\Resources\UserResource
+     */
+    public function updatePermissions(Request $request, User $user)
+    {
+        if ($user->isAdmin()) return response()->json(['message' => 'Permission denied'], 403);
+
+        $request->validate([
+            'permissions' => 'array',
+            'permissions.*' => 'exists:permissions,name'
+        ]);
+
+        $user->syncPermissions($request['permissions']);
+        return new UserResource($user);
     }
 }

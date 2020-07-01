@@ -21,8 +21,15 @@ Route::namespace('API')->group(function () {
         Route::get('auth/user', 'Auth\AuthController@auth');
         Route::post('auth/logout', 'Auth\AuthController@logout');
 
+        // Users
         Route::apiResource('users', 'UserController');
+        Route::get('users/{user}/permissions', 'UserController@permissions');
+        Route::match(['put', 'patch'], 'users/{user}/permissions', 'UserController@updatePermissions');
+
+        // Roles
         Route::apiResource('roles', 'RoleController');
+
+        // Permissions
         Route::apiResource('permissions', 'PermissionController');
     });
 });

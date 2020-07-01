@@ -24,6 +24,12 @@ class UserResource extends JsonResource
                 },
                 $this->roles->toArray()
             ),
+            'permissions' => array_map(
+                function ($permission) {
+                    return $permission['name'];
+                },
+                $this->permissions->toArray()
+            ),
         ];
     }
 }
