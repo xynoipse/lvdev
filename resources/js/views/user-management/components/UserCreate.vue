@@ -21,7 +21,7 @@
 <script>
 import UserResource from '@/api/user';
 import to from '@/utils/async-await';
-import { toastLoader, toastSuccess, toastError } from '@/utils/alert';
+import { toastLoader, toastSuccess } from '@/utils/alert';
 import UserForm from './UserForm';
 
 export default {
@@ -52,11 +52,11 @@ export default {
       this.$emit('store');
       this.toggleDisable();
       this.close();
-      toastSuccess('User successfully created!');
+      toastSuccess('User has been created successfully');
     },
     toggleDisable() {
       this.disabled = !this.disabled;
-      this.$refs.form.toggleDisable();
+      this.$refs.form.toggleLoading();
     },
     close() {
       this.$bvModal.hide('user-create');
@@ -67,14 +67,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-#modal-btn {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 0.5rem;
-  .btn:first-child {
-    margin-right: 0.5rem;
-  }
-}
-</style>

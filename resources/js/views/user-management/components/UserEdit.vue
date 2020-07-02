@@ -21,7 +21,7 @@
 <script>
 import UserResource from '@/api/user';
 import to from '@/utils/async-await';
-import { toastLoader, toastSuccess, toastError } from '@/utils/alert';
+import { toastLoader, toastSuccess } from '@/utils/alert';
 import UserForm from './UserForm';
 
 export default {
@@ -42,22 +42,25 @@ export default {
       const form = this.$refs.form;
       const id = this.data.id;
       const data = form.$data.user;
+
       form.clearErrors();
       this.toggleDisable();
+
       toastLoader('Updating User...');
       const [err, res] = await to(UserResource.update(id, data));
       if (err) {
         form.$data.errors = err.response.data.errors;
         return this.toggleDisable();
       }
+
       this.$emit('update');
       this.toggleDisable();
       this.close();
-      toastSuccess('User successfully updated!');
+      toastSuccess('User has been updated successfully');
     },
     toggleDisable() {
       this.disabled = !this.disabled;
-      this.$refs.form.toggleDisable();
+      this.$refs.form.toggleLoading();
     },
     close() {
       this.$bvModal.hide('user-edit');

@@ -8,12 +8,27 @@
     </template>
 
     <template v-slot:cell(actions)="row">
-      <div class="btn-actions">
+      <div class="btn-actions" v-role="['admin']">
         <b-button variant="primary" size="sm" v-b-modal.user-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>
           Edit
         </b-button>
-        <b-button variant="danger" size="sm" @click="destroy(row, $event.target)">
+        <b-button
+          variant="info"
+          size="sm"
+          v-if="!row.item.role.includes('admin')"
+          v-b-modal.user-permissions
+          @click="edit(row)"
+        >
+          <i class="fas fa-pencil-alt"></i>
+          Permissions
+        </b-button>
+        <b-button
+          v-role="['superadmin']"
+          variant="danger"
+          size="sm"
+          @click="destroy(row, $event.target)"
+        >
           <i class="fas fa-trash"></i>
           Delete
         </b-button>
@@ -27,6 +42,7 @@ import UserResource from '@/api/user';
 import to from '@/utils/async-await';
 import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
 import { enableRow, disableRow } from '@/utils/row';
+import { role } from '@/directives';
 
 export default {
   name: 'UsersTable',
@@ -34,13 +50,14 @@ export default {
     data: { type: Array },
     busy: { default: true }
   },
+  directives: { role },
   data() {
     return {
       fields: [
         { key: 'name', label: 'Name' },
         { key: 'email', label: 'Email' },
         { key: 'role[0]', label: 'Role' },
-        { key: 'actions', label: '' }
+        { key: 'actions', label: '', class: 'actions' }
       ]
     };
   },
@@ -62,7 +79,7 @@ export default {
         if (!err) {
           this.$emit('onChange');
           this.data.splice(index, 1);
-          toastSuccess('User successfully deleted');
+          toastSuccess('User has been deleted successfully');
         }
         enableRow(target);
       }
@@ -70,19 +87,3 @@ export default {
   }
 };
 </script>
-
-<style lang="scss" scoped>
-.table-responsive {
-  margin-bottom: 0;
-}
-.btn-actions {
-  display: flex;
-  justify-content: flex-end;
-  .btn {
-    width: 4.5rem;
-    &:first-child {
-      margin-right: 5px;
-    }
-  }
-}
-</style>

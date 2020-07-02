@@ -6,7 +6,7 @@
     <sidebar-dropdown text="User Management" icon="fas fa-users-cog">
       <sidebar-item text="Users" :to="{ name: 'users' }" icon="fas fa-users" exact></sidebar-item>
     </sidebar-dropdown>
-    <sidebar-dropdown text="Access Control" icon="fas fa-user-lock">
+    <sidebar-dropdown v-role="['admin']" text="Access Control" icon="fas fa-user-lock">
       <sidebar-item text="Roles" :to="{ name: 'roles' }" icon="fas fa-briefcase"></sidebar-item>
       <sidebar-item text="Permissions" :to="{ name: 'permissions' }" icon="fas fa-unlock-alt"></sidebar-item>
     </sidebar-dropdown>
@@ -15,6 +15,7 @@
 
 <script>
 import { Treeview } from 'admin-lte';
+import { role, permission } from '@/directives';
 import * as SidebarComponents from './components';
 
 export default {
@@ -22,6 +23,7 @@ export default {
   components: {
     ...SidebarComponents
   },
+  directives: { role, permission },
   data() {
     return {
       treeview: null

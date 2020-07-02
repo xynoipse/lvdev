@@ -1,6 +1,38 @@
+/* Custom */
+
+// Sweetalert2
 .swal2-container {
   .swal2-popup {
     border: 1px solid rgba(0,0,0,.2);
     box-shadow: none !important;
   }
+}
+
+// Table
+.table-responsive {
+  margin-bottom: 0;
+}
+.actions {
+  width: 30%;
+  .btn-actions {
+    display: flex;
+    justify-content: flex-end;
+    .btn {
+      color: #fff !important;
+      min-width: 4rem;
+      margin-left: 5px;
+    }
+  }
+}
+
+// Modal
+.modal-dialog {
+  #modal-btn {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    .btn:first-child {
+      margin-right: 0.5rem;
+    }
+  }  
 }

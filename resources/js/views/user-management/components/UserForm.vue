@@ -1,11 +1,10 @@
 <template>
-  <fragment>
+  <div>
     <b-form-group label="Role" label-for="role">
       <b-form-select
         autofocus
         v-model="user.role"
         :options="roles"
-        :disabled="disabled"
         :class="{ 'is-invalid': errors.role }"
         @input="clearErrors('role')"
       >
@@ -24,7 +23,6 @@
         autocomplete="name"
         placeholder="Name"
         v-model="user.name"
-        :disabled="disabled"
         :class="{ 'is-invalid': errors.name }"
         @input="clearErrors('name')"
       />
@@ -40,7 +38,6 @@
         autocomplete="email"
         placeholder="Email Address"
         v-model="user.email"
-        :disabled="disabled"
         :class="{ 'is-invalid': errors.email }"
         @input="clearErrors('email')"
       />
@@ -53,7 +50,6 @@
       <password
         size="24"
         v-model="user.password"
-        :disabled="disabled"
         :error="{ 'is-invalid': errors.password }"
         @input="clearErrors('password')"
       >
@@ -62,11 +58,13 @@
         </span>
       </password>
     </b-form-group>
-  </fragment>
+    <b-overlay :show="loading" no-wrap />
+  </div>
 </template>
 
 <script>
-import RoleResource from '@/api/role';
+import User from '@/api/user';
+import Role from '@/api/role';
 import to from '@/utils/async-await';
 import { Password } from '@/components/password';
 
@@ -80,29 +78,42 @@ export default {
     nopwd: { type: Boolean, default: false }
   },
   data() {
-    const data = this.data || {};
     return {
       user: {
-        role: data.role ? data.role[0] : null,
-        name: data.name || null,
-        email: data.email || null,
+        role: null,
+        name: null,
+        email: null,
         password: null
       },
       roles: [],
-      disabled: false,
+      loading: true,
       errors: {}
     };
   },
   methods: {
+    async getUser() {
+      const id = this.data ? this.data.id : null;
+
+      if (id) {
+        const [err, res] = await to(User.get(id));
+        const { role, name, email } = res.data;
+        this.user = { role: role[0], name, email, password: null };
+      }
+
+      this.getRoles();
+    },
     async getRoles() {
-      const [err, res] = await to(RoleResource.list());
+      const [err, res] = await to(Role.list());
+
       res.data.forEach(role => {
         const { name: value, name: text } = role;
         this.roles.push({ value, text });
       });
+
+      this.toggleLoading();
     },
-    toggleDisable() {
-      this.disabled = !this.disabled;
+    toggleLoading() {
+      this.loading = !this.loading;
     },
     clearInput() {
       Object.keys(this.user).forEach(key => {
@@ -115,10 +126,7 @@ export default {
     }
   },
   mounted() {
-    this.getRoles();
+    this.getUser();
   }
 };
 </script>
-
-<style>
-</style>
