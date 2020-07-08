@@ -4,10 +4,30 @@
       <b-tab title="Account" active>
         <form class="form-horizontal" @submit.prevent="updateProfile">
           <b-form-group label="Name" label-cols-sm="2" label-for="name">
-            <b-form-input id="name" v-model="user.name" autocomplete="name" placeholder="Name" />
+            <b-form-input
+              id="name"
+              autocomplete="name"
+              placeholder="Name"
+              v-model="user.name"
+              :class="{ 'is-invalid': errors.name }"
+              @input="clearErrors('name')"
+            />
+            <span v-if="errors.name" class="invalid-feedback" role="alert">
+              <strong v-text="errors.name[0]"></strong>
+            </span>
           </b-form-group>
           <b-form-group label="Email" label-cols-sm="2" label-for="email">
-            <b-form-input id="email" v-model="user.email" autocomplete="email" placeholder="Email" />
+            <b-form-input
+              id="email"
+              autocomplete="email"
+              placeholder="Email"
+              v-model="user.email"
+              :class="{ 'is-invalid': errors.email }"
+              @input="clearErrors('email')"
+            />
+            <span v-if="errors.email" class="invalid-feedback" role="alert">
+              <strong v-text="errors.email[0]"></strong>
+            </span>
           </b-form-group>
 
           <b-button type="submit" variant="primary">Update Profile</b-button>
@@ -59,6 +79,10 @@ export default {
       EventBus.$emit('updateProfile');
       this.loading = false;
       toastSuccess('Profile has been updated successfully');
+    },
+    clearErrors(field = null) {
+      if (field) return (this.errors[field] = null);
+      this.errors = {};
     }
   },
   mounted() {
