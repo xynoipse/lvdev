@@ -27,7 +27,7 @@
             </p>
           </user-header>
           <user-footer>
-            <b-button variant="default" class="btn-flat">Profile</b-button>
+            <b-button :to="{ name: 'profile' }" variant="default" class="btn-flat">Profile</b-button>
             <b-button variant="default" class="btn-flat float-right" @click="logout">Log out</b-button>
           </user-footer>
         </dropdown-menu>
