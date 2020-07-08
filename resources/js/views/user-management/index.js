@@ -1,8 +1,8 @@
-export default [
-  {
-    path: 'users',
-    name: 'users',
-    component: () => import('./UserIndex'),
-    meta: { title: 'All Users' }
-  }
-];
+import userRoutes from './user';
+import profileRoutes from './profile';
+
+const userManagementRoutes = [];
+export default userManagementRoutes.concat(
+  userRoutes,
+  profileRoutes
+);

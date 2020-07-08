@@ -145,4 +145,30 @@ class UserController extends Controller
         $user->syncPermissions($request['permissions']);
         return new UserResource($user);
     }
+
+    /**
+     * Update current user profile
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \App\Http\Resources\UserResource
+     */
+    public function updateProfile(Request $request)
+    {
+        $auth = $request->user()->id === $request->id;
+        if ($auth) {
+            $user = User::find($request->id);
+
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user)],
+            ]);
+
+            $user->update([
+                'name' => $request['name'],
+                'email' => $request['email'],
+            ]);
+
+            return new UserResource($user);
+        }
+    }
 }

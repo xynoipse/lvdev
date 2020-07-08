@@ -20,6 +20,14 @@ class UserResource extends Resource {
       data: { permissions },
     });
   }
+
+  updateProfile(user) {
+    return request({
+      url: `profile`,
+      method: 'put',
+      data: user,
+    });
+  }
 }
 
 export default new UserResource;
