@@ -30,6 +30,29 @@
             </span>
           </b-form-group>
 
+          <b-form-group label="Password" label-cols-sm="2" label-for="password">
+            <password
+              size="24"
+              v-if="password"
+              v-model="user.password"
+              :error="{ 'is-invalid': errors.password }"
+              @input="clearErrors('password')"
+            >
+              <b-button variant="outline-danger" class="ml-1" @click="resetPassword">
+                <i class="fa fa-times-circle"></i>
+                <span class="d-none d-sm-inline">Cancel</span>
+              </b-button>
+              <span v-if="errors.password" class="invalid-feedback" role="alert">
+                <strong v-text="errors.password[0]"></strong>
+              </span>
+            </password>
+            <b-button
+              variant="outline-danger"
+              v-if="!password"
+              @click="resetPassword"
+            >Reset Password</b-button>
+          </b-form-group>
+
           <b-button type="submit" variant="primary">Update Profile</b-button>
           <b-overlay :show="loading" no-wrap />
         </form>
@@ -44,16 +67,21 @@ import User from '@/api/user';
 import to from '@/utils/async-await';
 import eventBus from '@/utils/event-bus.js';
 import { toastLoader, toastSuccess } from '@/utils/alert';
+import { Password } from '@/components/password';
 
 export default {
   name: 'ProfileTab',
   props: {
     data: { type: Array }
   },
+  components: {
+    Password
+  },
   data() {
     return {
       user: {},
       loading: true,
+      password: false,
       errors: {}
     };
   },
@@ -61,10 +89,13 @@ export default {
     async getUser() {
       const [err, res] = await to(auth());
       const { id, name, email } = res.data;
-      this.user = { id, name, email };
+      this.user = { id, name, email, password: null };
       this.loading = false;
     },
     async updateProfile() {
+      const password = this.user.password;
+      if (!password) this.password = false;
+
       this.loading = true;
       toastLoader('Updating Profile...');
 
@@ -77,8 +108,13 @@ export default {
       await to(this.$store.dispatch('auth/user'));
 
       eventBus.$emit('updateProfile');
+      if (password) this.resetPassword();
       this.loading = false;
       toastSuccess('Profile has been updated successfully');
+    },
+    resetPassword() {
+      if (this.password) this.user.password = null;
+      this.password = !this.password;
     },
     clearErrors(field = null) {
       if (field) return (this.errors[field] = null);

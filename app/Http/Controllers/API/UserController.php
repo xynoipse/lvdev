@@ -94,6 +94,19 @@ class UserController extends Controller
             'email' => $request['email'],
         ]);
 
+        if ($request->password) {
+            if (!$request->user()->isAdmin('super'))
+                return response()->json(['message' => 'Permission denied'], 403);
+
+            $request->validate([
+                'password' => 'required|string|min:8',
+            ]);
+
+            $user->update([
+                'password' => Hash::make($request['password']),
+            ]);
+        }
+
         $role = Role::findByName($request['role']);
         $user->syncRoles($role);
 
@@ -167,6 +180,16 @@ class UserController extends Controller
                 'name' => $request['name'],
                 'email' => $request['email'],
             ]);
+
+            if ($request->password) {
+                $request->validate([
+                    'password' => 'required|string|min:8',
+                ]);
+
+                $user->update([
+                    'password' => Hash::make($request['password']),
+                ]);
+            }
 
             return new UserResource($user);
         }

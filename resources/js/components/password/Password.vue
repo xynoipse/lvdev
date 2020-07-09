@@ -10,10 +10,8 @@
     />
     <span class="input-group-append">
       <b-button variant="primary" :disabled="disabled" @click="generate">
-        <span>
-          <i class="fa fa-sync-alt"></i>
-          Generate
-        </span>
+        <i class="fa fa-sync-alt"></i>
+        <span class="d-none d-sm-inline">Generate</span>
       </b-button>
     </span>
     <slot></slot>

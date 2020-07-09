@@ -49,14 +49,20 @@
     <b-form-group v-if="!nopwd" label="Password" label-for="password">
       <password
         size="24"
+        v-if="!password"
         v-model="user.password"
         :error="{ 'is-invalid': errors.password }"
         @input="clearErrors('password')"
       >
+        <b-button v-if="resetpwd" variant="outline-danger" class="ml-1" @click="resetPassword">
+          <i class="fa fa-times-circle"></i>
+          <span class="d-none d-sm-inline">Cancel</span>
+        </b-button>
         <span v-if="errors.password" class="invalid-feedback" role="alert">
           <strong v-text="errors.password[0]"></strong>
         </span>
       </password>
+      <b-button variant="outline-danger" v-if="password" @click="resetPassword">Reset Password</b-button>
     </b-form-group>
     <b-overlay :show="loading" no-wrap />
   </div>
@@ -75,7 +81,8 @@ export default {
   },
   props: {
     data: { type: Object },
-    nopwd: { type: Boolean, default: false }
+    nopwd: { type: Boolean, default: false },
+    resetpwd: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -87,6 +94,7 @@ export default {
       },
       roles: [],
       loading: true,
+      password: this.resetpwd,
       errors: {}
     };
   },
@@ -112,7 +120,12 @@ export default {
 
       this.toggleLoading();
     },
+    resetPassword() {
+      this.user.password = null;
+      this.password = !this.password;
+    },
     toggleLoading() {
+      if (this.user.password === null) this.password = true;
       this.loading = !this.loading;
     },
     clearInput() {

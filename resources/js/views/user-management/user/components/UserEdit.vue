@@ -9,7 +9,7 @@
     centered
   >
     <form @submit.stop.prevent="update">
-      <user-form ref="form" :data="data" nopwd />
+      <user-form ref="form" :data="data" :resetpwd="resetPassword" :nopwd="!resetPassword" />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
         <b-button type="submit" variant="primary" :disabled="disabled">Update User</b-button>
@@ -21,6 +21,7 @@
 <script>
 import UserResource from '@/api/user';
 import to from '@/utils/async-await';
+import { hasRole } from '@/utils/role-permission';
 import { toastLoader, toastSuccess } from '@/utils/alert';
 import UserForm from './UserForm';
 
@@ -67,6 +68,11 @@ export default {
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
+    }
+  },
+  computed: {
+    resetPassword() {
+      return hasRole(['superadmin']);
     }
   }
 };
