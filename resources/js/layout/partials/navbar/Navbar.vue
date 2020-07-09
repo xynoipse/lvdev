@@ -39,7 +39,7 @@
 <script>
 import { auth } from '@/api/auth';
 import to from '@/utils/async-await';
-import { EventBus } from '@/utils/event-bus.js';
+import eventBus from '@/utils/event-bus.js';
 import { DropdownMenu } from '@/components/dropdown';
 import * as NavbarComponents from './components';
 
@@ -80,7 +80,7 @@ export default {
     this.getUser();
     this.setSidebarStatus();
 
-    EventBus.$on('updateProfile', () => {
+    eventBus.$on('updateProfile', () => {
       this.getUser();
     });
   }

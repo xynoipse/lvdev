@@ -42,7 +42,7 @@
 import { auth } from '@/api/auth';
 import User from '@/api/user';
 import to from '@/utils/async-await';
-import { EventBus } from '@/utils/event-bus.js';
+import eventBus from '@/utils/event-bus.js';
 import { toastLoader, toastSuccess } from '@/utils/alert';
 
 export default {
@@ -76,7 +76,7 @@ export default {
 
       await to(this.$store.dispatch('auth/user'));
 
-      EventBus.$emit('updateProfile');
+      eventBus.$emit('updateProfile');
       this.loading = false;
       toastSuccess('Profile has been updated successfully');
     },
