@@ -125,7 +125,7 @@ export default {
       this.password = !this.password;
     },
     toggleLoading() {
-      if (this.user.password === null) this.password = true;
+      if (this.resetpwd && !this.user.password) this.password = true;
       this.loading = !this.loading;
     },
     clearInput() {
