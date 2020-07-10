@@ -17,7 +17,7 @@ class UserController extends Controller
     public function __construct()
     {
         $this->middleware('admin:super')->only('destroy');
-        $this->middleware('admin')->except('index');
+        $this->middleware('admin')->except('index', 'updateProfile');
     }
 
     /**
