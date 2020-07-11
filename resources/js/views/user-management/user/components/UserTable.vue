@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import UserResource from '@/api/user';
+import User from '@/api/user';
 import to from '@/utils/async-await';
 import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
 import { enableRow, disableRow } from '@/utils/row';
@@ -75,7 +75,7 @@ export default {
         disableRow(target);
         toastLoader('Deleting User...');
 
-        const [err] = await to(UserResource.destroy(item.id));
+        const [err] = await to(User.destroy(item.id));
         if (!err) {
           this.$emit('onChange');
           this.data.splice(index, 1);

@@ -26,7 +26,7 @@ export async function beforeGuards(to, from, next) {
       next({ name: 'dashboard' });
     } else {
       const id = store.getters.id;
-      const { role, permission } = to.meta;
+      const { roles, permissions } = to.meta;
 
       if (!id) {
         const [err] = await handle(store.dispatch('auth/user'));
@@ -36,8 +36,8 @@ export async function beforeGuards(to, from, next) {
         }
       }
 
-      if (role || permission) {
-        if (role && hasRole(role) || permission && hasPermission(permission)) {
+      if (roles || permissions) {
+        if (roles && hasRole(roles) || permissions && hasPermission(permissions)) {
           next();
         } else {
           next({ name: 'dashboard' });

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import UserResource from '@/api/user';
+import User from '@/api/user';
 import to from '@/utils/async-await';
 import { hasRole } from '@/utils/role-permission';
 import { toastLoader, toastSuccess } from '@/utils/alert';
@@ -48,7 +48,7 @@ export default {
       this.toggleDisable();
 
       toastLoader('Updating User...');
-      const [err, res] = await to(UserResource.update(id, data));
+      const [err, res] = await to(User.update(id, data));
       if (err) {
         form.$data.errors = err.response.data.errors;
         return this.toggleDisable();

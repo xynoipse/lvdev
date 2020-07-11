@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import UserResource from '@/api/user';
+import User from '@/api/user';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
 import UserForm from './UserForm';
@@ -43,7 +43,7 @@ export default {
       this.toggleDisable();
 
       toastLoader('Creating User...');
-      const [err, res] = await to(UserResource.store(data));
+      const [err, res] = await to(User.store(data));
       if (err) {
         form.$data.errors = err.response.data.errors;
         return this.toggleDisable();
