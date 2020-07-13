@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -24,8 +25,22 @@ class LvdevSeeder extends Seeder
             'user'
         ];
 
+        $permissions = [
+            'view posts',
+            'create posts',
+            'edit posts',
+            'delete posts',
+        ];
+
         foreach ($roles as $value) {
             $role = Role::create(['name' => $value]);
+
+            if ($value == 'user') {
+                foreach ($permissions as $permission) {
+                    $permission = Permission::create(['name' => $permission]);
+                    $role->givePermissionTo($permission);
+                }
+            }
 
             User::create([
                 'name' => ucfirst($value),

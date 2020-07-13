@@ -31,6 +31,8 @@ Route::namespace('API')->group(function () {
 
         // Roles
         Route::apiResource('roles', 'RoleController');
+        Route::get('roles/{role}/permissions', 'RoleController@permissions');
+        Route::match(['put', 'patch'], 'roles/{role}/permissions', 'RoleController@updatePermissions');
 
         // Permissions
         Route::apiResource('permissions', 'PermissionController');
