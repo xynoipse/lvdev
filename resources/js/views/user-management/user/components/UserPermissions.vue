@@ -28,7 +28,7 @@ import { toastLoader, toastSuccess } from '@/utils/alert';
 import PermissionsForm from './PermissionsForm';
 
 export default {
-  name: 'UserEditPermissions',
+  name: 'UserPermissions',
   components: {
     PermissionsForm
   },

@@ -45,7 +45,7 @@ import { enableRow, disableRow } from '@/utils/row';
 import { role } from '@/directives';
 
 export default {
-  name: 'UsersTable',
+  name: 'UserTable',
   props: {
     data: { type: Array },
     busy: { default: true }

@@ -9,7 +9,12 @@
     centered
   >
     <form @submit.stop.prevent="update">
-      <user-form ref="form" :data="data" :resetpwd="resetPassword" :nopwd="!resetPassword" />
+      <user-form
+        ref="form"
+        :data="data"
+        :resetpwd="hasRole(['superadmin'])"
+        :nopwd="!hasRole(['superadmin'])"
+      />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
         <b-button type="submit" variant="primary" :disabled="disabled">Update User</b-button>
@@ -68,23 +73,8 @@ export default {
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
-    }
-  },
-  computed: {
-    resetPassword() {
-      return hasRole(['superadmin']);
-    }
+    },
+    hasRole
   }
 };
 </script>
-
-<style lang="scss" scoped>
-#modal-btn {
-  display: flex;
-  justify-content: flex-end;
-  padding-top: 0.5rem;
-  .btn:first-child {
-    margin-right: 0.5rem;
-  }
-}
-</style>

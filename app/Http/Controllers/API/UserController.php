@@ -121,8 +121,11 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if ($user->isAdmin()) return response()->json(['message' => 'Permission denied'], 403);
+
         $user->delete();
-        return 204;
+
+        return response()->noContent();
     }
 
     /**
