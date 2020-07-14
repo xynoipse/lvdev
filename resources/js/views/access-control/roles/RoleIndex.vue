@@ -46,6 +46,7 @@ export default {
       this.loading = true;
       const query = { page };
       const data = await Role.list(query);
+      this.page = page;
       this.data = data;
       this.loading = false;
     },

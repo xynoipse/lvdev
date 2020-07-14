@@ -6,13 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PermissionResource;
 use App\Models\Permission;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('admin:super')->except('index');
+        $this->middleware('admin');
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PermissionResource
      */
     public function index()
     {
@@ -23,22 +30,30 @@ class PermissionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PermissionResource
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions'
+        ]);
+
+        $permission = Permission::create([
+            'name' => $request['name'],
+        ]);
+
+        return new PermissionResource($permission);
     }
 
     /**
      * Display the specified resource.
      *
      * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PermissionResource
      */
     public function show(Permission $permission)
     {
-        //
+        return new PermissionResource($permission);
     }
 
     /**
@@ -46,11 +61,19 @@ class PermissionController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Permission  $permission
-     * @return \Illuminate\Http\Response
+     * @return \App\Http\Resources\PermissionResource
      */
     public function update(Request $request, Permission $permission)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'string', 'max:255', Rule::unique('permissions')->ignore($permission)]
+        ]);
+
+        $permission->update([
+            'name' => $request['name']
+        ]);
+
+        return new PermissionResource($permission);
     }
 
     /**
@@ -61,6 +84,8 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        //
+        $permission->delete();
+
+        return response()->noContent();
     }
 }
