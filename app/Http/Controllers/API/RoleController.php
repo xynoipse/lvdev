@@ -25,13 +25,20 @@ class RoleController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \App\Http\Resources\RoleResource
      */
-    public function index()
+    public function index(Request $request)
     {
-        return RoleResource::collection(
-            Role::where('name', '!=', 'superadmin')->paginate()
-        );
+        $search = trim($request->search);
+
+        $roles = Role::where('name', '!=', 'superadmin');
+
+        if (!empty($search)) {
+            $roles->where('name', 'LIKE', "%$search%");
+        }
+
+        return RoleResource::collection($roles->paginate());
     }
 
     /**

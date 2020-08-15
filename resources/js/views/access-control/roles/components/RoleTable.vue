@@ -1,10 +1,32 @@
 <template>
-  <b-table :fields="fields" :items="data" :busy="busy" striped hover responsive>
+  <b-table
+    :fields="fields"
+    :items="data"
+    :busy="busy"
+    :tbody-tr-class="rowClass"
+    foot-clone
+    show-empty
+    striped
+    hover
+    responsive
+  >
     <template v-slot:table-busy>
       <div class="text-center">
         <b-spinner class="align-middle"></b-spinner>
         <strong>Loading...</strong>
       </div>
+    </template>
+
+    <template v-slot:emptyfiltered="scope">
+      <h4>{{ scope.emptyFilteredText }}</h4>
+    </template>
+
+    <template v-slot:head(selected)>
+      <b-form-checkbox v-model="allSelected" @change="toggleAll" />
+    </template>
+
+    <template v-slot:cell(selected)="row">
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-if="row.item.id > 2" />
     </template>
 
     <template v-slot:cell(permissions)="data">
@@ -53,10 +75,6 @@
 </template>
 
 <script>
-import Role from '@/api/role';
-import to from '@/utils/async-await';
-import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
-import { enableRow, disableRow } from '@/utils/row';
 import { hasRole } from '@/utils/role-permission';
 import { role } from '@/directives';
 
@@ -64,50 +82,61 @@ export default {
   name: 'RoleTable',
   props: {
     data: { type: Array },
-    busy: { default: true }
+    busy: { default: true },
   },
   directives: { role },
   data() {
     return {
       fields: [
-        { key: 'name', label: 'Name' },
+        { key: 'selected', label: '', class: 'select' },
+        { key: 'name', label: 'Name', sortable: true },
         { key: 'permissions', label: 'Permissions' },
-        { key: 'actions', label: '', class: 'actions' }
-      ]
+        { key: 'actions', label: '', class: 'actions' },
+      ],
+      selected: [],
+      allSelected: false,
     };
   },
   methods: {
     edit(row) {
       const role = row.item;
-      this.$emit('edit', role);
+      this.$emit('update:edit', role);
     },
-    async destroy(row, target) {
-      const { index, item } = row;
+    destroy(row) {
+      const role = row.item;
+      this.$emit('delete', role);
+    },
+    toggleAll(checked) {
+      if (!checked) return (this.selected = []);
 
-      const res = await alertConfirm('Delete Role?', 'This is irreversible!');
-
-      if (res.value) {
-        disableRow(target);
-        toastLoader('Deleting Role...');
-
-        const [err] = await to(Role.destroy(item.id));
-        if (!err) {
-          this.$emit('onChange');
-          this.data.splice(index, 1);
-          toastSuccess('Role has been deleted successfully');
+      this.data.forEach((item) => {
+        if (!this.selected.includes(item.id) && item.id > 2) {
+          this.selected.push(item.id);
         }
-        enableRow(target);
+      });
+    },
+    rowClass(item) {
+      if (!item) return;
+      if (item.status === 'deleting')
+        return 'text-muted table-danger table-disabled';
+    },
+    hasRole,
+  },
+  watch: {
+    selected(newVal, oldVal) {
+      this.$emit('update:select', this.selected);
+
+      this.allSelected = false;
+      if (this.data) {
+        if (this.data.length > 1 && newVal.length === this.data.length - 1)
+          this.allSelected = true;
       }
     },
-    hasRole
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-.btn-actions {
-  float: right;
-}
 .badge {
   color: #fff;
   margin-right: 5px;

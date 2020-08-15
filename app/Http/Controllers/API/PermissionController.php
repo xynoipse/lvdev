@@ -19,11 +19,20 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \App\Http\Resources\PermissionResource
      */
-    public function index()
+    public function index(Request $request)
     {
-        return PermissionResource::collection(Permission::paginate());
+        $search = trim($request->search);
+
+        $permissions = Permission::query();
+
+        if (!empty($search)) {
+            $permissions->where('name', 'LIKE', "%$search%");
+        }
+
+        return PermissionResource::collection($permissions->paginate());
     }
 
     /**

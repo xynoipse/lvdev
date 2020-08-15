@@ -12,59 +12,147 @@
       <b-card no-body>
         <b-card-header>
           <b-card-title title="Role List" />
+
+          <card-tools v-role="['superadmin']" v-if="actions.selected.length" left>
+            <b-button variant="danger" size="sm" @click="deleteSelected">
+              <i class="fas fa-trash"></i>
+              <span>Delete</span>
+            </b-button>
+          </card-tools>
+
+          <card-tools>
+            <b-form-input v-model="filter.search" placeholder="Search" />
+            <b-input-group-append>
+              <b-button variant="default" @click="getRoles">
+                <i class="fas fa-search"></i>
+              </b-button>
+            </b-input-group-append>
+          </card-tools>
         </b-card-header>
+
         <b-card-body class="p-0">
-          <role-table :data="data.data" :busy="loading" @onChange="reloadData" @edit="editRole" />
+          <role-table
+            :data="roles.data"
+            :busy="loading"
+            :select.sync="actions.selected"
+            :edit.sync="role"
+            @delete="deleteRole"
+            ref="table"
+          />
         </b-card-body>
       </b-card>
-      <pagination :data="data" @pagination-change-page="getRoles" :limit="4" align="center" />
+      <pagination :data="roles" @pagination-change-page="getRoles" :limit="4" align="center" />
     </content-body>
   </content-wrapper>
 </template>
 
 <script>
 import Role from '@/api/role';
-import { hasRole } from '@/utils/role-permission';
 import { role } from '@/directives';
+import to from '@/utils/async-await';
+import { hasRole } from '@/utils/role-permission';
+import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
 import * as RolesComponents from './components';
 
 export default {
   components: {
-    ...RolesComponents
+    ...RolesComponents,
   },
   directives: { role },
   data() {
     return {
-      data: {},
+      roles: {},
       role: {},
       page: 1,
-      loading: true
+      loading: true,
+      actions: {
+        selected: [],
+      },
+      filter: {
+        search: null,
+      },
     };
   },
   methods: {
     async getRoles(page = 1) {
+      this.clearTable();
       this.loading = true;
-      const query = { page };
+      const query = { page, search: this.filter.search };
       const data = await Role.list(query);
       this.page = page;
-      this.data = data;
+      this.roles = data;
       this.loading = false;
     },
     async reloadData() {
+      this.clearTable();
       const res = await Role.list({ page: this.page });
       if (res.data.length === 0) {
         this.page--;
         this.reloadData();
       }
-      this.data = res;
+      this.roles = res;
     },
-    editRole(e) {
-      this.role = e;
+    async deleteRole(role) {
+      const res = await alertConfirm('Delete Role?', 'This is irreversible!');
+
+      if (res.value) {
+        toastLoader('Deleting Role...');
+
+        let roles = this.roles.data;
+        Object.values(roles).forEach(async (item, index) => {
+          if (item.id === role.id) {
+            item.status = 'deleting';
+            this.roles.data.splice(index, 1, item);
+
+            const [err] = await to(Role.destroy(role.id));
+            if (!err) {
+              this.reloadData();
+              this.roles.data.splice(index, 1);
+              toastSuccess('Role has been deleted successfully');
+            }
+          }
+        });
+      }
     },
-    hasRole
+    async deleteSelected() {
+      const res = await alertConfirm(
+        'Delete All Selected Role/s?',
+        'This is irreversible!'
+      );
+
+      if (res.value) {
+        toastLoader('Deleting Role/s...');
+
+        let roles = this.roles.data;
+        await Object.values(roles).forEach(async (role, index) => {
+          if (this.actions.selected.includes(role.id)) {
+            role.status = 'deleting';
+            this.roles.data.splice(index, 1, role);
+
+            const [err] = await to(Role.destroy(role.id));
+            if (!err) {
+              this.roles.data.splice(index, 1);
+              this.actions.selected.shift();
+            }
+            if (!this.actions.selected.length) {
+              this.reloadData();
+              toastSuccess('Role/s has been deleted successfully');
+            }
+          }
+        });
+      }
+    },
+    clearTable() {
+      this.actions.selected = [];
+      if (this.$refs.table) {
+        this.$refs.table.allSelected = false;
+        this.$refs.table.selected = [];
+      }
+    },
+    hasRole,
   },
   mounted() {
     this.getRoles();
-  }
+  },
 };
 </script>
