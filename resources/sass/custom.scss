@@ -16,15 +16,35 @@
 .table-responsive {
   margin-bottom: 0;
 }
+.table-disabled {
+  div {
+    pointer-events: none;
+    filter: alpha(opacity=65);
+    opacity: 0.65;
+  }
+}
+.select {
+  width: 5%;
+  padding-left: 1.5rem !important;
+  .custom-control-label:before {
+    background-color: #fff;
+    box-shadow: unset;
+  }
+}
 .actions {
   width: 30%;
   .btn-actions {
     display: flex;
     justify-content: flex-end;
     .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #fff !important;
-      min-width: 4rem;
       margin-left: 5px;
+      i {
+        margin-right: 2px;
+      }
     }
   }
 }

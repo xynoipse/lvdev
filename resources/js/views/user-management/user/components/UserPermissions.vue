@@ -30,14 +30,14 @@ import PermissionsForm from './PermissionsForm';
 export default {
   name: 'UserPermissions',
   components: {
-    PermissionsForm
+    PermissionsForm,
   },
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return {
-      disabled: false
+      disabled: false,
     };
   },
   methods: {
@@ -66,19 +66,7 @@ export default {
     close() {
       this.$bvModal.hide('user-permissions');
       this.disabled = false;
-    }
-  }
+    },
+  },
 };
 </script>
-
-<style lang="scss" scoped>
-#permissions-list {
-  .permission-col {
-    height: 20rem;
-    .form-group {
-      overflow-y: auto;
-      height: 90%;
-    }
-  }
-}
-</style>

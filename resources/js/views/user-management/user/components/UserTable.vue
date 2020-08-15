@@ -1,5 +1,15 @@
 <template>
-  <b-table :fields="fields" :items="data" :busy="busy" striped hover responsive>
+  <b-table
+    :fields="fields"
+    :items="data"
+    :busy="busy"
+    :tbody-tr-class="rowClass"
+    foot-clone
+    show-empty
+    striped
+    hover
+    responsive
+  >
     <template v-slot:table-busy>
       <div class="text-center">
         <b-spinner class="align-middle"></b-spinner>
@@ -7,11 +17,23 @@
       </div>
     </template>
 
+    <template v-slot:emptyfiltered="scope">
+      <h4>{{ scope.emptyFilteredText }}</h4>
+    </template>
+
+    <template v-slot:head(selected)>
+      <b-form-checkbox v-model="allSelected" @change="toggleAll" />
+    </template>
+
+    <template v-slot:cell(selected)="row">
+      <b-form-checkbox v-model="selected" :value="row.item.id" />
+    </template>
+
     <template v-slot:cell(actions)="row">
       <div class="btn-actions" v-role="['admin']">
         <b-button variant="primary" size="sm" v-b-modal.user-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>
-          Edit
+          <span>Edit</span>
         </b-button>
         <b-button
           variant="info"
@@ -21,16 +43,11 @@
           @click="edit(row)"
         >
           <i class="fas fa-pencil-alt"></i>
-          Permissions
+          <span>Permissions</span>
         </b-button>
-        <b-button
-          v-role="['superadmin']"
-          variant="danger"
-          size="sm"
-          @click="destroy(row, $event.target)"
-        >
+        <b-button v-role="['superadmin']" variant="danger" size="sm" @click="destroy(row)">
           <i class="fas fa-trash"></i>
-          Delete
+          <span>Delete</span>
         </b-button>
       </div>
     </template>
@@ -38,52 +55,62 @@
 </template>
 
 <script>
-import User from '@/api/user';
-import to from '@/utils/async-await';
-import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
-import { enableRow, disableRow } from '@/utils/row';
 import { role } from '@/directives';
 
 export default {
   name: 'UserTable',
   props: {
     data: { type: Array },
-    busy: { default: true }
+    busy: { default: true },
   },
   directives: { role },
   data() {
     return {
       fields: [
-        { key: 'name', label: 'Name' },
-        { key: 'email', label: 'Email' },
+        { key: 'selected', label: '', class: 'select' },
+        { key: 'name', label: 'Name', sortable: true },
+        { key: 'email', label: 'Email', sortable: true },
         { key: 'role[0]', label: 'Role' },
-        { key: 'actions', label: '', class: 'actions' }
-      ]
+        { key: 'actions', label: '', class: 'actions' },
+      ],
+      selected: [],
+      allSelected: false,
     };
   },
   methods: {
     edit(row) {
       const user = row.item;
-      this.$emit('edit', user);
+      this.$emit('update:edit', user);
     },
-    async destroy(row, target) {
-      const { index, item } = row;
+    destroy(row) {
+      const user = row.item;
+      this.$emit('delete', user);
+    },
+    toggleAll(checked) {
+      if (!checked) return (this.selected = []);
 
-      const res = await alertConfirm('Delete User?', 'This is irreversible!');
-
-      if (res.value) {
-        disableRow(target);
-        toastLoader('Deleting User...');
-
-        const [err] = await to(User.destroy(item.id));
-        if (!err) {
-          this.$emit('onChange');
-          this.data.splice(index, 1);
-          toastSuccess('User has been deleted successfully');
+      this.data.forEach((item) => {
+        if (!this.selected.includes(item.id)) {
+          this.selected.push(item.id);
         }
-        enableRow(target);
+      });
+    },
+    rowClass(item) {
+      if (!item) return;
+      if (item.status === 'deleting')
+        return 'text-muted table-danger table-disabled';
+    },
+  },
+  watch: {
+    selected(newVal, oldVal) {
+      this.$emit('update:select', this.selected);
+
+      this.allSelected = false;
+      if (this.data) {
+        if (this.data.length && newVal.length === this.data.length)
+          this.allSelected = true;
       }
-    }
-  }
+    },
+  },
 };
 </script>

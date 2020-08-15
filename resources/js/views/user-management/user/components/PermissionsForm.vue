@@ -35,32 +35,32 @@ import to from '@/utils/async-await';
 export default {
   name: 'PermissionsForm',
   props: {
-    data: { type: Object }
+    data: { type: Object },
   },
   data() {
     return {
       user: {
-        permissions: []
+        permissions: [],
       },
       role: {
         permissions: [],
-        selected: []
+        selected: [],
       },
       permissions: [],
-      loading: true
+      loading: true,
     };
   },
   methods: {
     async getRolePermissions() {
       const [err, res] = await to(User.permissions(this.data.id));
 
-      res.data.role.forEach(permission => {
+      res.data.role.forEach((permission) => {
         const { name: value, name: text } = permission;
         this.role.permissions.push({ value, text });
         this.role.selected.push(permission.name);
       });
 
-      res.data.user.forEach(permission => {
+      res.data.user.forEach((permission) => {
         this.user.permissions.push(permission.name);
       });
 
@@ -69,7 +69,7 @@ export default {
     async getPermissions() {
       const [err, res] = await to(Permission.list());
 
-      res.data.forEach(permissions => {
+      res.data.forEach((permissions) => {
         const { name: value, name: text } = permissions;
         if (!this.role.selected.includes(permissions.name))
           this.permissions.push({ value, text });
@@ -79,18 +79,19 @@ export default {
     },
     toggleLoading() {
       this.loading = !this.loading;
-    }
+    },
   },
   mounted() {
     this.getRolePermissions();
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
 #permissions-form {
   .permission-col {
-    height: 20rem;
+    min-height: 10rem;
+    max-height: 20rem;
     .form-group {
       overflow-y: auto;
       height: 90%;

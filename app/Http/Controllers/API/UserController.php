@@ -23,17 +23,33 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \App\Http\Resources\UserResource
      */
     public function index(Request $request)
     {
-        return UserResource::collection(
-            User::where('id', '!=', $request->user()->id)
-                ->whereHas('roles', function ($query) {
-                    $query->where('name', '!=', 'superadmin');
-                })
-                ->paginate()
-        );
+        $role = trim($request->role);
+        $search = trim($request->search);
+
+        $users = User::where('id', '!=', $request->user()->id)
+            ->whereHas('roles', function ($query) {
+                $query->where('id', '!=', 1);
+            });
+
+        if (!empty($role)) {
+            $users->whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role);
+            });
+        }
+
+        if (!empty($search)) {
+            $users->where(function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('email', 'LIKE', "%$search%");
+            });
+        }
+
+        return UserResource::collection($users->paginate());
     }
 
     /**
@@ -83,6 +99,8 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if ($user->isAdmin('super')) return response()->json(['message' => 'Permission denied'], 403);
+
         $request->validate([
             'role' => 'required|string|exists:roles,name,id,!1',
             'name' => 'required|string|max:255',
@@ -121,7 +139,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if ($user->isAdmin()) return response()->json(['message' => 'Permission denied'], 403);
+        if ($user->isAdmin('super')) return response()->json(['message' => 'Permission denied'], 403);
 
         $user->delete();
 

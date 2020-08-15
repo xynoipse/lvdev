@@ -15,9 +15,11 @@ plugins.forEach(plugin => {
 
 // Global components
 import * as Contents from './content';
+import * as Cards from './card';
 
 const globalComponents = {
-  ...Contents
+  ...Contents,
+  ...Cards
 };
 
 Object.keys(globalComponents).forEach(key =>
