@@ -22,11 +22,16 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="['superadmin']" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" v-if="row.item.id > 2" />
+      <b-form-checkbox
+        v-model="selected"
+        :value="row.item.id"
+        v-if="row.item.id > 2"
+        v-role="['superadmin']"
+      />
     </template>
 
     <template v-slot:cell(permissions)="data">

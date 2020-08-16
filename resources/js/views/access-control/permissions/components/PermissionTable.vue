@@ -22,11 +22,11 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="['superadmin']" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" />
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="['superadmin']" />
     </template>
 
     <template v-slot:cell(actions)="row" v-if="hasRole(['superadmin'])">
@@ -45,9 +45,7 @@
 </template>
 
 <script>
-import Permission from '@/api/permission';
-import to from '@/utils/async-await';
-import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
+import { role } from '@/directives';
 import { hasRole } from '@/utils/role-permission';
 
 export default {
@@ -56,6 +54,7 @@ export default {
     data: { type: Array },
     busy: { default: true },
   },
+  directives: { role },
   data() {
     return {
       fields: [

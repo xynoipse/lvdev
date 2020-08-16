@@ -13,6 +13,27 @@
 }
 
 // Table
+#search-box {
+  margin-bottom: 0.75rem;
+  @media (min-width: 768px) {
+    float: right !important;
+  }
+}
+#table-nav {
+  margin-bottom: 0.25rem;
+  button,
+  input,
+  select {
+    margin: 0 0.1rem 0.5rem 0.1rem;
+    width: unset;
+    @media (max-width: 767px) {
+      width: 24%;
+    }
+    @media (max-width: 569px) {
+      width: 48%;
+    }
+  }
+}
 .table-responsive {
   margin-bottom: 0;
 }

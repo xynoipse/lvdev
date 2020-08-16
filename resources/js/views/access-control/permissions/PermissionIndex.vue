@@ -8,25 +8,32 @@
       </div>
     </content-header>
     <content-body>
-      <b-card no-body>
+      <b-form id="search-box" @submit.prevent="getPermissions">
+        <b-input-group>
+          <b-form-input v-model="filter.search" placeholder="Search" />
+          <b-input-group-append>
+            <b-button type="submit" variant="default">
+              <i class="fas fa-search"></i>
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+      </b-form>
+
+      <div id="table-nav">
+        <b-button
+          variant="danger"
+          :disabled="!actions.selected.length"
+          v-role="['superadmin']"
+          @click="deleteSelected"
+        >
+          <i class="fas fa-trash"></i>
+          <span>Delete Selected</span>
+        </b-button>
+      </div>
+
+      <b-card class="w-100" no-body>
         <b-card-header>
           <b-card-title title="Permission List" />
-
-          <card-tools v-role="['superadmin']" v-if="actions.selected.length" left>
-            <b-button variant="danger" size="sm" @click="deleteSelected">
-              <i class="fas fa-trash"></i>
-              <span>Delete</span>
-            </b-button>
-          </card-tools>
-
-          <card-tools>
-            <b-form-input v-model="filter.search" placeholder="Search" />
-            <b-input-group-append>
-              <b-button variant="default" @click="getPermissions">
-                <i class="fas fa-search"></i>
-              </b-button>
-            </b-input-group-append>
-          </card-tools>
         </b-card-header>
 
         <b-card-body class="p-0">
@@ -122,6 +129,8 @@ export default {
       }
     },
     async deleteSelected() {
+      if (!this.actions.selected.length) return;
+
       const res = await alertConfirm(
         'Delete All Selected Permission/s?',
         'This is irreversible!'
