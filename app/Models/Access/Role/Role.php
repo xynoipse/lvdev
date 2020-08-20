@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Access\Role;
 
+use App\Acl;
 use Spatie\Permission\Models\Role as Model;
 
 class Role extends Model
@@ -18,8 +19,8 @@ class Role extends Model
      */
     public function isAdmin($super = null)
     {
-        $admin = ['superadmin', 'admin'];
-        if ($super == 'super') $admin = ['superadmin'];
-        return in_array($this->name, $admin);
+        $admin = [Acl::ROLE_SUPERADMIN, Acl::ROLE_ADMIN];
+        if ($super == 'super') $admin = [Acl::ROLE_SUPERADMIN];
+        return in_array($this->id, $admin);
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Admin\Access;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PermissionResource;
-use App\Models\Permission;
+use App\Http\Resources\Admin\Access\PermissionResource;
+use App\Models\Access\Permission\Permission;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -20,7 +20,7 @@ class PermissionController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\PermissionResource
+     * @return \App\Http\Resources\Admin\Access\PermissionResource
      */
     public function index(Request $request)
     {
@@ -39,7 +39,7 @@ class PermissionController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\PermissionResource
+     * @return \App\Http\Resources\Admin\Access\PermissionResource
      */
     public function store(Request $request)
     {
@@ -57,8 +57,8 @@ class PermissionController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Permission  $permission
-     * @return \App\Http\Resources\PermissionResource
+     * @param  \App\Models\Access\Permission\Permission  $permission
+     * @return \App\Http\Resources\Admin\Access\PermissionResource
      */
     public function show(Permission $permission)
     {
@@ -69,8 +69,8 @@ class PermissionController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Permission  $permission
-     * @return \App\Http\Resources\PermissionResource
+     * @param  \App\Models\Access\Permission\Permission  $permission
+     * @return \App\Http\Resources\Admin\Access\PermissionResource
      */
     public function update(Request $request, Permission $permission)
     {
@@ -88,7 +88,7 @@ class PermissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Permission  $permission
+     * @param  \App\Models\Access\Permission\Permission  $permission
      * @return \Illuminate\Http\Response
      */
     public function destroy(Permission $permission)

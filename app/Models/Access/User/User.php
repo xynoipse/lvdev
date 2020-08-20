@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Access\User;
 
+use App\Acl;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,8 +51,8 @@ class User extends Authenticatable
      */
     public function isAdmin($super = null)
     {
-        $admin = ['superadmin', 'admin'];
-        if ($super == 'super') $admin = 'superadmin';
+        $admin = [Acl::ROLE_SUPERADMIN, Acl::ROLE_ADMIN];
+        if ($super == 'super') $admin = Acl::ROLE_SUPERADMIN;
         return $this->hasRole($admin);
     }
 }

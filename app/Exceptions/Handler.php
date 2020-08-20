@@ -53,10 +53,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        if ($request->expectsJson()) {
-            return parent::render($request, $exception);
-        }
-        
-        return response()->json(['message' => 'Not Found!'], 404);
+        return parent::render($request, $exception);
     }
 }

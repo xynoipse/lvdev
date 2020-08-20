@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\Permission;
-use App\Models\Role;
-use App\Models\User;
+use App\Acl;
+use App\Models\Access\Role\Role;
+use App\Models\Access\User\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\PermissionRegistrar;
@@ -19,32 +19,12 @@ class LvdevSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $roles = [
-            'superadmin',
-            'admin',
-            'user'
-        ];
-
-        $permissions = [
-            'view posts',
-            'create posts',
-            'edit posts',
-            'delete posts',
-        ];
-
-        foreach ($roles as $value) {
-            $role = Role::create(['name' => $value]);
-
-            if ($value == 'user') {
-                foreach ($permissions as $permission) {
-                    $permission = Permission::create(['name' => $permission]);
-                    $role->givePermissionTo($permission);
-                }
-            }
+        foreach (Acl::roles() as $role) {
+            $role = Role::findOrCreate($role);
 
             User::create([
-                'name' => ucfirst($value),
-                'email' => $value . '@lvdev.com',
+                'name' => ucfirst($role->name),
+                'email' => "{$role->name}@app.com",
                 'password' => Hash::make('password'),
             ])->assignRole($role);
         }

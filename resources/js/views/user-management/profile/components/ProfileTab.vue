@@ -72,17 +72,17 @@ import { Password } from '@/components/password';
 export default {
   name: 'ProfileTab',
   props: {
-    data: { type: Array }
+    data: { type: Array },
   },
   components: {
-    Password
+    Password,
   },
   data() {
     return {
       user: {},
       loading: true,
       password: false,
-      errors: {}
+      errors: {},
     };
   },
   methods: {
@@ -105,7 +105,7 @@ export default {
         return (this.loading = false);
       }
 
-      await to(this.$store.dispatch('auth/user'));
+      await to(this.$store.dispatch('user/auth'));
 
       eventBus.$emit('updateProfile');
       if (password) this.resetPassword();
@@ -119,10 +119,10 @@ export default {
     clearErrors(field = null) {
       if (field) return (this.errors[field] = null);
       this.errors = {};
-    }
+    },
   },
   mounted() {
     this.getUser();
-  }
+  },
 };
 </script>

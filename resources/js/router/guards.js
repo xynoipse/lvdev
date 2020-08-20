@@ -5,7 +5,7 @@ import { isAuth, setAuth } from '@/utils/auth';
 import { hasRole, hasPermission } from '@/utils/role-permission';
 import handle from '@/utils/async-await';
 
-const title = 'Lvdev';
+const title = store.getters.app.name;
 
 /**
  * Global before guards
@@ -25,13 +25,13 @@ export async function beforeGuards(to, from, next) {
     if (to.name === 'login') {
       next({ name: 'dashboard' });
     } else {
-      const id = store.getters.id;
+      const id = store.getters.user.id;
       const { roles, permissions } = to.meta;
 
       if (!id) {
-        const [err] = await handle(store.dispatch('auth/user'));
+        const [err] = await handle(store.dispatch('user/auth'));
         if (err) {
-          await handle(store.dispatch('auth/resetAuth'));
+          await handle(store.dispatch('user/resetAuth'));
           next({ name: 'login' });
         }
       }

@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Admin\Access;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PermissionResource;
-use App\Http\Resources\RoleResource;
-use App\Models\Role;
+use App\Http\Resources\Admin\Access\PermissionResource;
+use App\Http\Resources\Admin\Access\RoleResource;
+use App\Models\Access\Role\Role;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +26,7 @@ class RoleController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\RoleResource
+     * @return \App\Http\Resources\Admin\Access\RoleResource
      */
     public function index(Request $request)
     {
@@ -45,7 +45,7 @@ class RoleController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\RoleResource
+     * @return \App\Http\Resources\Admin\Access\RoleResource
      */
     public function store(Request $request)
     {
@@ -67,8 +67,8 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Role  $role
-     * @return \App\Http\Resources\RoleResource
+     * @param  \App\Models\Access\Role\Role  $role
+     * @return \App\Http\Resources\Admin\Access\RoleResource
      */
     public function show(Role $role)
     {
@@ -79,8 +79,8 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Role  $role
-     * @return \App\Http\Resources\RoleResource
+     * @param  \App\Models\Access\Role\Role  $role
+     * @return \App\Http\Resources\Admin\Access\RoleResource
      */
     public function update(Request $request, Role $role)
     {
@@ -100,7 +100,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Role  $role
+     * @param  \App\Models\Access\Role\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
@@ -115,8 +115,8 @@ class RoleController extends Controller
     /**
      * Get permissions from role
      *
-     * @param  \App\Models\Role $role
-     * @return \App\Http\Resources\PermissionResource
+     * @param  \App\Models\Access\Role\Role $role
+     * @return \App\Http\Resources\Admin\Access\PermissionResource
      */
     public function permissions(Role $role)
     {
@@ -126,8 +126,8 @@ class RoleController extends Controller
     /**
      * Update role permissions
      *
-     * @param  \App\Models\Role  $role
-     * @return \App\Http\Resources\RoleResource
+     * @param  \App\Models\Access\Role\Role  $role
+     * @return \App\Http\Resources\Admin\Access\RoleResource
      */
     public function updatePermissions(Request $request, Role $role)
     {

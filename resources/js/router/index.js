@@ -10,6 +10,7 @@ const router = createRouter();
 function createRouter() {
   const router = new Router({
     linkActiveClass: 'active',
+    base: process.env.MIX_APP_PATH,
     mode: 'history',
     routes
   });

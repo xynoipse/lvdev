@@ -42,8 +42,8 @@ const actions = {
     });
   },
 
-  // get user
-  user({ commit }) {
+  // get auth user
+  auth({ commit }) {
     return new Promise(async (resolve, reject) => {
       const [err, res] = await to(auth());
       if (err) return reject(err);

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Admin\Access;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\PermissionResource;
-use App\Http\Resources\UserResource;
-use App\Models\Role;
-use App\Models\User;
+use App\Http\Resources\Admin\Access\PermissionResource;
+use App\Http\Resources\Admin\Access\UserResource;
+use App\Models\Access\Role\Role;
+use App\Models\Access\User\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
@@ -24,7 +24,7 @@ class UserController extends Controller
      * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\UserResource
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function index(Request $request)
     {
@@ -56,7 +56,7 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\UserResource
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function store(Request $request)
     {
@@ -82,7 +82,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Access\User\User  $user
      * @return \Illuminate\Http\Response
      */
     public function show(User $user)
@@ -94,8 +94,8 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \App\Http\Resources\UserResource
+     * @param  \App\Models\Access\User\User  $user
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function update(Request $request, User $user)
     {
@@ -134,7 +134,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Access\User\User  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(User $user)
@@ -149,7 +149,7 @@ class UserController extends Controller
     /**
      * Get all user permissions
      *
-     * @param  \App\Models\User  $user
+     * @param  \App\Models\Access\User\User  $user
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
     public function permissions(User $user)
@@ -164,8 +164,8 @@ class UserController extends Controller
      * Update user direct permissions
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\User  $user
-     * @return \App\Http\Resources\UserResource
+     * @param  \App\Models\Access\User\User  $user
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function updatePermissions(Request $request, User $user)
     {
@@ -184,7 +184,7 @@ class UserController extends Controller
      * Update current user profile
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\UserResource
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function updateProfile(Request $request)
     {

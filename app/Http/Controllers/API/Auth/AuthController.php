@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Admin\Access\UserResource;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -29,6 +29,7 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except(['auth', 'logout']);
+        $this->middleware('auth:sanctum')->only(['auth', 'logout']);
     }
 
     /**
@@ -50,7 +51,7 @@ class AuthController extends Controller
      * The user has been authenticated.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \App\Http\Resources\UserResource
+     * @return \App\Http\Resources\Admin\Access\UserResource
      */
     public function auth(Request $request)
     {

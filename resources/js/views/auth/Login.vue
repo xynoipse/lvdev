@@ -9,7 +9,7 @@
                 <b-col lg="7" class="d-none d-lg-block bg-login-image"></b-col>
                 <b-col lg="5" class="login-form p-5">
                   <div class="login-logo">
-                    <strong>Lvdev</strong>
+                    <strong v-html="name"></strong>
                   </div>
 
                   <b-form @submit.prevent="authLogin">
@@ -83,12 +83,13 @@ export default {
   name: 'Login',
   data() {
     return {
+      name: this.$store.getters.app.name,
       login: {
         email: '',
-        password: null
+        password: null,
       },
       loading: false,
-      errors: {}
+      errors: {},
     };
   },
   methods: {
@@ -96,7 +97,7 @@ export default {
       this.errors = {};
       this.loading = true;
       await to(csrf());
-      let [err] = await to(this.$store.dispatch('auth/login', this.login));
+      let [err] = await to(this.$store.dispatch('user/login', this.login));
       if (err) {
         this.errors = err.response.data.errors;
         return (this.loading = false);
@@ -107,8 +108,8 @@ export default {
       authRedirect
         ? this.$router.push({ path: authRedirect })
         : this.$router.push({ name: 'dashboard' });
-    }
-  }
+    },
+  },
 };
 </script>
 

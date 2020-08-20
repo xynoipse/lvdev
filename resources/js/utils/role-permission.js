@@ -6,7 +6,7 @@ import store from '@/store';
  */
 export function hasRole(value) {
   if (value && value instanceof Array && value.length > 0) {
-    const roles = store.getters && store.getters.roles;
+    const roles = store.getters && store.getters.user.roles;
     const superAdmin = roles.includes('superadmin');
     let admin = roles.includes('admin');
 
@@ -32,8 +32,8 @@ export function hasRole(value) {
  */
 export function hasPermission(value) {
   if (value && value instanceof Array && value.length > 0) {
-    const roles = store.getters && store.getters.roles;
-    const permissions = store.getters && store.getters.permissions;
+    const roles = store.getters && store.getters.user.roles;
+    const permissions = store.getters && store.getters.user.permissions;
     const superAdmin = roles.includes('superadmin');
     const admin = roles.includes('admin');
 

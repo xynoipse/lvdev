@@ -47,34 +47,34 @@ export default {
   name: 'Navbar',
   components: {
     DropdownMenu,
-    ...NavbarComponents
+    ...NavbarComponents,
   },
   data() {
     return {
       name: null,
-      role: null
+      role: null,
     };
   },
   methods: {
     async logout() {
-      await to(this.$store.dispatch('auth/logout'));
+      await to(this.$store.dispatch('user/logout'));
       this.$router.push({ name: 'login' });
     },
     async getUser() {
-      const name = this.$store.getters.name;
-      const role = this.$store.getters.roles;
+      const name = this.$store.getters.user.name;
+      const role = this.$store.getters.user.roles;
       this.name = name;
-      this.role = role[0].replace(/^\w/, c => c.toUpperCase());
+      this.role = role[0].replace(/^\w/, (c) => c.toUpperCase());
     },
     toggleSidebar() {
       this.$store.dispatch('app/toggleSidebar');
     },
     setSidebarStatus() {
-      const sidebarStatus = this.$store.getters.sidebar.status;
+      const sidebarStatus = this.$store.getters.app.sidebar.status;
       if (sidebarStatus == 0) {
         document.body.classList.add('sidebar-collapse');
       }
-    }
+    },
   },
   created() {
     this.getUser();
@@ -83,7 +83,7 @@ export default {
     eventBus.$on('updateProfile', () => {
       this.getUser();
     });
-  }
+  },
 };
 </script>
 

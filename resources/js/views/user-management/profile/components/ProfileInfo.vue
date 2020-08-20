@@ -21,22 +21,21 @@ import to from '@/utils/async-await';
 import eventBus from '@/utils/event-bus.js';
 
 export default {
-  name: 'ProfileCard',
+  name: 'ProfileInfo',
   data() {
     return {
       user: {
         name: null,
-        role: null
-      }
+        role: null,
+      },
     };
   },
   methods: {
     getUser() {
-      const name = this.$store.getters.name;
-      const role = this.$store.getters.roles;
-      this.user.name = name;
-      this.user.role = role[0].replace(/^\w/, c => c.toUpperCase());
-    }
+      const user = this.$store.getters.user;
+      this.user.name = user.name;
+      this.user.role = user.roles[0].replace(/^\w/, (c) => c.toUpperCase());
+    },
   },
   mounted() {
     this.getUser();
@@ -44,6 +43,6 @@ export default {
     eventBus.$on('updateProfile', () => {
       this.getUser();
     });
-  }
+  },
 };
 </script>

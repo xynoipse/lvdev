@@ -1,24 +1,24 @@
 import Layout from '@/layout';
 
-import dashboardRoutes from '@/views/dashboard';
-import userManagementRoutes from '@/views/user-management';
-import accessControlRoutes from '@/views/access-control';
+import dashboard from '@/views/dashboard';
+import userManagement from '@/views/user-management';
+import accessControl from '@/views/access-control';
 
 const routes = [
   {
-    path: '/app/login',
+    path: '/login',
     name: 'login',
     component: () => import('@/views/auth/Login'),
     meta: { title: 'Login' }
   },
   {
-    path: '/app',
+    path: '/',
     component: Layout,
     redirect: { name: 'dashboard' },
     children: [
-      ...dashboardRoutes,
-      ...userManagementRoutes,
-      ...accessControlRoutes
+      ...dashboard,
+      ...userManagement,
+      ...accessControl
     ]
   }
 ];

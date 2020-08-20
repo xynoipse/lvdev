@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Acl;
 use Closure;
 
 class Administrator
@@ -15,8 +16,8 @@ class Administrator
      */
     public function handle($request, Closure $next, $super = null)
     {
-        $admin = ['superadmin', 'admin'];
-        if ($super == 'super') $admin = 'superadmin';
+        $admin = [Acl::ROLE_SUPERADMIN, Acl::ROLE_ADMIN];
+        if ($super == 'super') $admin = Acl::ROLE_SUPERADMIN;
 
         $admin = $request->user()->hasRole($admin);
         if (!$admin) return response()->json(['message' => 'Permission denied'], 403);

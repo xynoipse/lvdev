@@ -1,8 +1,8 @@
 <template>
   <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href class="brand-link" @click.prevent="dashboard">
-      <img src="@/assets/img/app.png" alt="LVCMS" class="brand-image" style="opacity: .8" />
-      <span class="brand-text font-weight-light">Lvdev</span>
+      <img src="@/assets/img/app.png" :alt="app.name" class="brand-image" style="opacity: .8" />
+      <span class="brand-text font-weight-light" v-html="app.name"></span>
     </a>
 
     <sidebar-menu />
@@ -15,13 +15,18 @@ import SidebarMenu from './SidebarMenu';
 export default {
   name: 'Sidebar',
   components: {
-    SidebarMenu
+    SidebarMenu,
+  },
+  data() {
+    return {
+      app: this.$store.getters.app,
+    };
   },
   methods: {
     dashboard() {
       this.$router.push({ name: 'dashboard' });
-    }
-  }
+    },
+  },
 };
 </script>
 

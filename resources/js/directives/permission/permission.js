@@ -5,8 +5,8 @@ export default {
     const { value } = binding;
 
     if (value && value instanceof Array && value.length > 0) {
-      const roles = store.getters && store.getters.roles;
-      const permissions = store.getters && store.getters.permissions;
+      const roles = store.getters && store.getters.user.roles;
+      const permissions = store.getters && store.getters.user.permissions;
       const superAdmin = roles.includes('superadmin');
       const admin = roles.includes('admin');
 
