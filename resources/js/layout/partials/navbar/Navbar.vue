@@ -57,20 +57,20 @@ export default {
   },
   methods: {
     async logout() {
+      localStorage.setItem('authRedirect', this.$route.name);
       await to(this.$store.dispatch('user/logout'));
       this.$router.push({ name: 'login' });
     },
     async getUser() {
-      const name = this.$store.getters.user.name;
-      const role = this.$store.getters.user.roles;
-      this.name = name;
-      this.role = role[0].replace(/^\w/, (c) => c.toUpperCase());
+      const user = this.$store.getters.user;
+      this.name = user.name;
+      this.role = user.roles[0].replace(/^\w/, (c) => c.toUpperCase());
     },
     toggleSidebar() {
       this.$store.dispatch('app/toggleSidebar');
     },
     setSidebarStatus() {
-      const sidebarStatus = this.$store.getters.app.sidebar.status;
+      const sidebarStatus = this.app.sidebar.status;
       if (sidebarStatus == 0) {
         document.body.classList.add('sidebar-collapse');
       }

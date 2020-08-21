@@ -6,16 +6,16 @@
       text="Profile"
       :to="{ name: 'profile' }"
       icon="fas fa-user-alt"
-      v-if="!hasRole(['admin'])"
+      v-if="!hasRole([app.admin])"
       exact
     />
 
-    <sidebar-header text="System" v-if="hasRole(['admin'])" />
-    <sidebar-dropdown text="User Management" icon="fas fa-users-cog" v-if="hasRole(['admin'])">
+    <sidebar-header text="System" v-if="hasRole([app.admin])" />
+    <sidebar-dropdown text="User Management" icon="fas fa-users-cog" v-if="hasRole([app.admin])">
       <sidebar-item text="Users" :to="{ name: 'users' }" icon="fas fa-users" exact />
       <sidebar-item text="Profile" :to="{ name: 'profile' }" icon="fas fa-user-alt" exact />
     </sidebar-dropdown>
-    <sidebar-dropdown text="Access Control" icon="fas fa-user-lock" v-if="hasRole(['admin'])">
+    <sidebar-dropdown text="Access Control" icon="fas fa-user-lock" v-if="hasRole([app.admin])">
       <sidebar-item text="Roles" :to="{ name: 'roles' }" icon="fas fa-briefcase" />
       <sidebar-item text="Permissions" :to="{ name: 'permissions' }" icon="fas fa-unlock-alt" />
     </sidebar-dropdown>
@@ -43,7 +43,7 @@ export default {
     ...RolePermission,
   },
   created() {
-    this.treeview = this.$store.getters.app.sidebar.treeview;
+    this.treeview = this.app.sidebar.treeview;
   },
   mounted() {
     if (this.treeview) {

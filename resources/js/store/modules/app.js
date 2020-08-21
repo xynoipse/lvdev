@@ -2,6 +2,8 @@ import Cookies from 'js-cookie';
 
 const state = {
   name: process.env.MIX_APP_NAME,
+  superadmin: 'superadmin',
+  admin: 'admin',
   sidebar: {
     status: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,
     treeview: true

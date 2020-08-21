@@ -6,8 +6,8 @@ const state = {
   auth: false,
   id: null,
   name: null,
-  roles: null,
-  permissions: null,
+  roles: [],
+  permissions: [],
 };
 
 const mutations = {
@@ -70,8 +70,8 @@ const actions = {
       commit('SET_AUTH', false);
       commit('SET_ID', null);
       commit('SET_NAME', null);
-      commit('SET_ROLES', null);
-      commit('SET_PERMISSIONS', null);
+      commit('SET_ROLES', []);
+      commit('SET_PERMISSIONS', []);
 
       removeAuth();
       resolve();

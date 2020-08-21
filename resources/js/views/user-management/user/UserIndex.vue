@@ -1,7 +1,7 @@
 <template>
   <content-wrapper>
     <content-header title="Users" parent="User Management">
-      <div v-role="['admin']">
+      <div v-role="[app.admin]">
         <b-button variant="primary" v-b-modal.user-create>Add User</b-button>
         <user-create @store="reloadData" />
         <user-edit :data="user" @update="reloadData" />
@@ -24,7 +24,7 @@
         <b-button
           variant="danger"
           :disabled="!actions.selected.length"
-          v-role="['superadmin']"
+          v-role="[app.superadmin]"
           @click="deleteSelected"
         >
           <i class="fas fa-trash"></i>

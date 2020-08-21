@@ -1,7 +1,7 @@
 <template>
-  <content-wrapper v-role="['admin']">
+  <content-wrapper v-role="[app.admin]">
     <content-header title="Roles" parent="Access Control">
-      <div v-if="hasRole(['superadmin'])">
+      <div v-if="hasRole([app.superadmin])">
         <b-button variant="primary" v-b-modal.role-create>Add Role</b-button>
         <role-create @store="reloadData" />
         <role-edit :data="role" @update="reloadData" />
@@ -24,7 +24,7 @@
         <b-button
           variant="danger"
           :disabled="!actions.selected.length"
-          v-role="['superadmin']"
+          v-role="[app.superadmin]"
           @click="deleteSelected"
         >
           <i class="fas fa-trash"></i>

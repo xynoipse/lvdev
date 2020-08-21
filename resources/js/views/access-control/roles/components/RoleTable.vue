@@ -22,7 +22,7 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="['superadmin']" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
@@ -30,7 +30,7 @@
         v-model="selected"
         :value="row.item.id"
         v-if="row.item.id > 2"
-        v-role="['superadmin']"
+        v-role="[app.superadmin]"
       />
     </template>
 
@@ -45,7 +45,7 @@
     <template v-slot:cell(actions)="row">
       <div class="btn-actions" v-if="row.item.id > 2">
         <b-button
-          v-role="['superadmin']"
+          v-role="[app.superadmin]"
           variant="primary"
           size="sm"
           v-b-modal.role-edit
@@ -57,8 +57,8 @@
         <b-button
           variant="info"
           size="sm"
-          v-role="['admin']"
-          v-if="!hasRole(['superadmin'])"
+          v-role="[app.admin]"
+          v-if="!hasRole([app.superadmin])"
           v-b-modal.role-permissions
           @click="edit(row)"
         >
@@ -66,7 +66,7 @@
           Permissions
         </b-button>
         <b-button
-          v-role="['superadmin']"
+          v-role="[app.superadmin]"
           variant="danger"
           size="sm"
           @click="destroy(row, $event.target)"

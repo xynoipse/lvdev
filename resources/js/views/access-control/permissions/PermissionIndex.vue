@@ -1,7 +1,7 @@
 <template>
-  <content-wrapper v-role="['admin']">
+  <content-wrapper v-role="[app.admin]">
     <content-header title="Permissions" parent="User Management">
-      <div v-if="hasRole(['superadmin'])">
+      <div v-if="hasRole([app.superadmin])">
         <b-button variant="primary" v-b-modal.permission-create>Add Permission</b-button>
         <permission-create @store="reloadData" />
         <permission-edit :data="permission" @update="reloadData" />
@@ -23,7 +23,7 @@
         <b-button
           variant="danger"
           :disabled="!actions.selected.length"
-          v-role="['superadmin']"
+          v-role="[app.superadmin]"
           @click="deleteSelected"
         >
           <i class="fas fa-trash"></i>

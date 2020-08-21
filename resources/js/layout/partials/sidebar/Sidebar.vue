@@ -17,11 +17,6 @@ export default {
   components: {
     SidebarMenu,
   },
-  data() {
-    return {
-      app: this.$store.getters.app,
-    };
-  },
   methods: {
     dashboard() {
       this.$router.push({ name: 'dashboard' });

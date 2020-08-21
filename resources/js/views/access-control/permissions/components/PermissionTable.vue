@@ -22,14 +22,14 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="['superadmin']" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="['superadmin']" />
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.superadmin]" />
     </template>
 
-    <template v-slot:cell(actions)="row" v-if="hasRole(['superadmin'])">
+    <template v-slot:cell(actions)="row" v-if="hasRole([app.superadmin])">
       <div class="btn-actions">
         <b-button variant="primary" size="sm" v-b-modal.permission-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>

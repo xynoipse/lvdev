@@ -13,7 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$path = appPath();
-Route::get("{$path}/{any?}", function () {
-    return view('app');
-})->where('any', '.*');
+Route::get(appPath() . '/{any?}', 'AppController')->where('any', '.*');

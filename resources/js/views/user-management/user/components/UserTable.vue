@@ -22,15 +22,15 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="['superadmin']" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="['superadmin']" />
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.superadmin]" />
     </template>
 
     <template v-slot:cell(actions)="row">
-      <div class="btn-actions" v-role="['admin']">
+      <div class="btn-actions" v-role="[app.admin]">
         <b-button variant="primary" size="sm" v-b-modal.user-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>
           <span>Edit</span>
@@ -38,14 +38,14 @@
         <b-button
           variant="info"
           size="sm"
-          v-if="!row.item.role.includes('admin')"
+          v-if="!row.item.role.includes(app.admin)"
           v-b-modal.user-permissions
           @click="edit(row)"
         >
           <i class="fas fa-pencil-alt"></i>
           <span>Permissions</span>
         </b-button>
-        <b-button v-role="['superadmin']" variant="danger" size="sm" @click="destroy(row)">
+        <b-button v-role="[app.superadmin]" variant="danger" size="sm" @click="destroy(row)">
           <i class="fas fa-trash"></i>
           <span>Delete</span>
         </b-button>

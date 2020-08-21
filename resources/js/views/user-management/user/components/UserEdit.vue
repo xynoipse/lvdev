@@ -12,8 +12,8 @@
       <user-form
         ref="form"
         :data="data"
-        :resetpwd="hasRole(['superadmin'])"
-        :nopwd="!hasRole(['superadmin'])"
+        :resetpwd="hasRole([app.superadmin])"
+        :nopwd="!hasRole([app.superadmin])"
       />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
@@ -33,14 +33,14 @@ import UserForm from './UserForm';
 export default {
   name: 'UserEdit',
   components: {
-    UserForm
+    UserForm,
   },
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return {
-      disabled: false
+      disabled: false,
     };
   },
   methods: {
@@ -74,7 +74,7 @@ export default {
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
     },
-    hasRole
-  }
+    hasRole,
+  },
 };
 </script>

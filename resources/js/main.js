@@ -5,6 +5,7 @@ import store from './store';
 
 import 'core-js/stable';
 import './components';
+import './utils/app-mixin';
 
 new Vue({
   el: '#app',

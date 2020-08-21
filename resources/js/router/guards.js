@@ -17,13 +17,12 @@ const title = store.getters.app.name;
 export async function beforeGuards(to, from, next) {
   NProgress.start();
 
-  document.title = `${to.meta.title} - ${title}`;
   const auth = isAuth();
 
   if (auth) {
     setAuth(1);
     if (to.name === 'login') {
-      next({ name: 'dashboard' });
+      next({ name: 'app' });
     } else {
       const id = store.getters.user.id;
       const { roles, permissions } = to.meta;
@@ -40,7 +39,7 @@ export async function beforeGuards(to, from, next) {
         if (roles && hasRole(roles) || permissions && hasPermission(permissions)) {
           next();
         } else {
-          next({ name: 'dashboard' });
+          next({ name: 'app' });
         }
       } else {
         next();
@@ -58,7 +57,12 @@ export async function beforeGuards(to, from, next) {
 
 /**
  * Global after hooks
+ * 
+ * @param {Route} to
+ * @param {Route} from
  */
-export function afterHooks() {
+export function afterHooks(to, from) {
+  document.title = `${to.meta.title} - ${title}`;
+
   NProgress.done();
 };

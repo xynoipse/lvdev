@@ -9,7 +9,7 @@
                 <b-col lg="7" class="d-none d-lg-block bg-login-image"></b-col>
                 <b-col lg="5" class="login-form p-5">
                   <div class="login-logo">
-                    <strong v-html="name"></strong>
+                    <strong v-html="app.name"></strong>
                   </div>
 
                   <b-form @submit.prevent="authLogin">
@@ -83,7 +83,6 @@ export default {
   name: 'Login',
   data() {
     return {
-      name: this.$store.getters.app.name,
       login: {
         email: '',
         password: null,

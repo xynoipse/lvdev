@@ -13,6 +13,7 @@ const routes = [
   },
   {
     path: '/',
+    name: 'app',
     component: Layout,
     redirect: { name: 'dashboard' },
     children: [
@@ -20,6 +21,10 @@ const routes = [
       ...userManagement,
       ...accessControl
     ]
+  },
+  {
+    path: '*',
+    redirect: { name: 'app' },
   }
 ];
 

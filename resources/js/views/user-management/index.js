@@ -1,8 +1,8 @@
-import userRoutes from './user';
-import profileRoutes from './profile';
+import user from './user';
+import profile from './profile';
 
-const userManagementRoutes = [];
-export default userManagementRoutes.concat(
-  userRoutes,
-  profileRoutes
+const userManagement = [];
+export default userManagement.concat(
+  user,
+  profile
 );

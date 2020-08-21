@@ -1,8 +1,8 @@
-import rolesRoutes from './roles';
-import permissionsRoutes from './permissions';
+import roles from './roles';
+import permissions from './permissions';
 
-const accessControlRoutes = [];
-export default accessControlRoutes.concat(
-  rolesRoutes,
-  permissionsRoutes
+const accessControl = [];
+export default accessControl.concat(
+  roles,
+  permissions
 );
