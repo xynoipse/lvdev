@@ -7,7 +7,11 @@ export function isAuth() {
 }
 
 export function setAuth(isAuth) {
-  return Cookies.set(key, isAuth, { expires: 1 / 12 });
+  const sessionLifetime = process.env.MIX_SESSION_LIFETIME || 120;
+
+  return Cookies.set(key, isAuth, {
+    expires: sessionLifetime / 1440
+  });
 }
 
 export function removeAuth() {
