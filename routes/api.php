@@ -1,7 +1,5 @@
 <?php
 
-use GuzzleHttp\Middleware;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,18 +13,20 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::namespace('API')->group(function () {
-    /*
-    * Auth Routes
-    */
-    Route::post('auth/login', 'Auth\AuthController@login');
-    Route::get('auth/user', 'Auth\AuthController@auth');
-    Route::post('auth/logout', 'Auth\AuthController@logout');
+Route::namespace('Domains')->group(function () {
+    /**
+     * Auth Routes
+     */
+    Route::prefix('auth')->namespace('Access\Http\Controllers\API\Auth')->group(function () {
+        Route::post('login', 'AuthController@login');
+        Route::get('user', 'AuthController@auth');
+        Route::post('logout', 'AuthController@logout');
+    });
 
-    /*
-    * Admin Routes
-    */
-    Route::namespace('Admin')->middleware('auth:sanctum')->group(function () {
+    /**
+     * Admin Routes
+     */
+    Route::middleware('auth:sanctum')->group(function () {
         includeRouteFiles(__DIR__ . '/Admin/');
     });
 });

@@ -1,10 +1,9 @@
 <?php
 
 use App\Acl;
-use App\Models\Access\Role\Role;
-use App\Models\Access\User\User;
+use App\Domains\Access\Models\Role;
+use App\Domains\Access\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\PermissionRegistrar;
 
 class LvdevSeeder extends Seeder
@@ -19,14 +18,25 @@ class LvdevSeeder extends Seeder
         // Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
+        // Add the master administrator, user id of 1
+        User::create([
+            'name' => 'Superadmin',
+            'email' => 'superadmin@app.com',
+            'password' => 'password',
+            'email_verified_at' => now(),
+        ])->assignRole(Role::findOrCreate(Acl::ROLE_ADMIN));
+
         foreach (Acl::roles() as $role) {
             $role = Role::findOrCreate($role);
 
-            User::create([
-                'name' => ucfirst($role->name),
-                'email' => "{$role->name}@app.com",
-                'password' => Hash::make('password'),
-            ])->assignRole($role);
+            if (app()->environment(['local', 'testing'])) {
+                User::create([
+                    'name' => ucfirst($role->name),
+                    'email' => "{$role->name}@app.com",
+                    'password' => 'password',
+                    'email_verified_at' => now(),
+                ])->assignRole($role);
+            }
         }
     }
 }

@@ -10,7 +10,6 @@ use Illuminate\Support\Str;
  */
 final class Acl
 {
-    const ROLE_SUPERADMIN = 'superadmin';
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
 
