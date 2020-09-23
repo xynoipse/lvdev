@@ -19,19 +19,19 @@
 </template>
 
 <script>
-import Permission from '@/api/permission';
+import Permission from '@/api/access/permission';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import PermissionForm from './PermissionForm';
+import PermissionForm from './forms/PermissionForm';
 
 export default {
   name: 'PermissionCreate',
   components: {
-    PermissionForm
+    PermissionForm,
   },
   data() {
     return {
-      disabled: false
+      disabled: false,
     };
   },
   methods: {
@@ -63,7 +63,7 @@ export default {
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
-    }
-  }
+    },
+  },
 };
 </script>

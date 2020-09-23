@@ -21,6 +21,14 @@ class UserResource extends Resource {
     });
   }
 
+  updatePassword(id, password) {
+    return request({
+      url: `/${this.uri}/${id}/password`,
+      method: 'put',
+      data: password,
+    });
+  }
+
   updateProfile(user) {
     return request({
       url: `profile`,

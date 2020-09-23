@@ -19,19 +19,19 @@
 </template>
 
 <script>
-import User from '@/api/user';
+import User from '@/api/access/user';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import UserForm from './UserForm';
+import UserForm from './forms/UserForm';
 
 export default {
   name: 'UserCreate',
   components: {
-    UserForm
+    UserForm,
   },
   data() {
     return {
-      disabled: false
+      disabled: false,
     };
   },
   methods: {
@@ -63,7 +63,7 @@ export default {
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
-    }
-  }
+    },
+  },
 };
 </script>

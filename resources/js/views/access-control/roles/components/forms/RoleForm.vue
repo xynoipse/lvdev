@@ -8,6 +8,7 @@
         v-model="role.name"
         :class="{ 'is-invalid': errors.name }"
         @input="clearErrors('name')"
+        autofocus
       />
       <span v-if="errors.name" class="invalid-feedback" role="alert">
         <strong v-text="errors.name[0]"></strong>
@@ -33,25 +34,24 @@
 </template>
 
 <script>
-import Role from '@/api/role';
-import Permission from '@/api/permission';
+import { Role, Permission } from '@/api/access';
 import to from '@/utils/async-await';
 
 export default {
   name: 'RoleForm',
   props: {
     data: { type: Object },
-    noname: { type: Boolean, default: false }
+    noname: { type: Boolean, default: false },
   },
   data() {
     return {
       role: {
         name: null,
-        permissions: []
+        permissions: [],
       },
       permissions: [],
       loading: true,
-      errors: {}
+      errors: {},
     };
   },
   methods: {
@@ -71,14 +71,14 @@ export default {
     async getRolePermissions() {
       let [err, res] = await to(Role.permissions(this.data.id));
 
-      res.data.forEach(permission => {
+      res.data.forEach((permission) => {
         this.role.permissions.push(permission.name);
       });
     },
     async getPermissions() {
       const [err, res] = await to(Permission.list());
 
-      res.data.forEach(permissions => {
+      res.data.forEach((permissions) => {
         const { name: value, name: text } = permissions;
         this.permissions.push({ value, text });
       });
@@ -89,18 +89,18 @@ export default {
       this.loading = !this.loading;
     },
     clearInput() {
-      Object.keys(this.role).forEach(key => {
+      Object.keys(this.role).forEach((key) => {
         this.role[key] = null;
       });
     },
     clearErrors(field = null) {
       if (field) return (this.errors[field] = null);
       this.errors = {};
-    }
+    },
   },
   mounted() {
     this.getRole();
-  }
+  },
 };
 </script>
 

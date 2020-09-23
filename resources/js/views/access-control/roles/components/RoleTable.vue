@@ -22,15 +22,15 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.masteradmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
       <b-form-checkbox
         v-model="selected"
         :value="row.item.id"
-        v-if="row.item.id > 2"
-        v-role="[app.superadmin]"
+        v-if="row.item.id !== 1"
+        v-role="[app.masteradmin]"
       />
     </template>
 
@@ -43,9 +43,9 @@
     </template>
 
     <template v-slot:cell(actions)="row">
-      <div class="btn-actions" v-if="row.item.id > 2">
+      <div class="btn-actions" v-if="row.item.id !== 1">
         <b-button
-          v-role="[app.superadmin]"
+          v-role="[app.masteradmin]"
           variant="primary"
           size="sm"
           v-b-modal.role-edit
@@ -58,7 +58,7 @@
           variant="info"
           size="sm"
           v-role="[app.admin]"
-          v-if="!hasRole([app.superadmin])"
+          v-if="!hasRole([app.masteradmin])"
           v-b-modal.role-permissions
           @click="edit(row)"
         >
@@ -66,7 +66,7 @@
           Permissions
         </b-button>
         <b-button
-          v-role="[app.superadmin]"
+          v-role="[app.masteradmin]"
           variant="danger"
           size="sm"
           @click="destroy(row, $event.target)"
@@ -80,8 +80,8 @@
 </template>
 
 <script>
-import { hasRole } from '@/utils/role-permission';
 import { role } from '@/directives';
+import { hasRole } from '@/utils/role-permission';
 
 export default {
   name: 'RoleTable',
@@ -115,7 +115,7 @@ export default {
       if (!checked) return (this.selected = []);
 
       this.data.forEach((item) => {
-        if (!this.selected.includes(item.id) && item.id > 2) {
+        if (!this.selected.includes(item.id) && item.id !== 1) {
           this.selected.push(item.id);
         }
       });
@@ -126,6 +126,9 @@ export default {
         return 'text-muted table-danger table-disabled';
     },
     hasRole,
+  },
+  mounted() {
+    if (!hasRole([this.app.masteradmin])) this.fields.shift();
   },
   watch: {
     selected(newVal, oldVal) {

@@ -19,22 +19,22 @@
 </template>
 
 <script>
-import Role from '@/api/role';
+import Role from '@/api/access/role';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import RoleForm from './RoleForm';
+import RoleForm from './forms/RoleForm';
 
 export default {
   name: 'RoleEdit',
   components: {
-    RoleForm
+    RoleForm,
   },
   props: {
-    data: {}
+    data: {},
   },
   data() {
     return {
-      disabled: false
+      disabled: false,
     };
   },
   methods: {
@@ -67,7 +67,7 @@ export default {
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
-    }
-  }
+    },
+  },
 };
 </script>

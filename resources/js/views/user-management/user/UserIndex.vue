@@ -1,40 +1,38 @@
 <template>
   <content-wrapper>
     <content-header title="Users" parent="User Management">
-      <div v-role="[app.admin]">
-        <b-button variant="primary" v-b-modal.user-create>Add User</b-button>
+      <div v-if="hasRole([app.admin])">
         <user-create @store="reloadData" />
         <user-edit :data="user" @update="reloadData" />
         <user-permissions :data="user" />
+        <user-password :data="user" v-role="[app.masteradmin]" />
       </div>
     </content-header>
     <content-body>
-      <b-form id="search-box" @submit.prevent="getUsers">
-        <b-input-group>
-          <b-form-input v-model="filter.search" placeholder="Search" />
-          <b-input-group-append>
-            <b-button type="submit" variant="default">
-              <i class="fas fa-search"></i>
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form>
+      <b-row>
+        <b-col sm="6">
+          <b-button variant="primary" v-b-modal.user-create v-role="[app.admin]">Add User</b-button>
+        </b-col>
 
-      <div id="table-nav">
-        <b-button
-          variant="danger"
-          :disabled="!actions.selected.length"
-          v-role="[app.superadmin]"
-          @click="deleteSelected"
-        >
-          <i class="fas fa-trash"></i>
-          <span>Delete Selected</span>
-        </b-button>
+        <b-col sm="6">
+          <b-form id="search-box" class="mt-sm-0 mt-2" @submit.prevent="getUsers">
+            <b-input-group>
+              <b-form-input v-model="filter.search" placeholder="Search" />
+              <b-input-group-append>
+                <b-button type="submit" variant="default">
+                  <i class="fas fa-search"></i>
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form>
+        </b-col>
+      </b-row>
 
-        <b-form-select v-model="filter.role" :options="filter.roles" @change="getUsers" />
+      <div id="filters">
+        <b-form-select size="sm" v-model="filter.role" :options="filter.roles" @change="getUsers" />
       </div>
 
-      <b-card class="w-100" no-body>
+      <b-card class="w-100 mb-2" no-body>
         <b-card-header>
           <b-card-title title="User List" />
         </b-card-header>
@@ -51,15 +49,26 @@
         </b-card-body>
       </b-card>
 
-      <pagination :data="users" @pagination-change-page="getUsers" :limit="4" align="center" />
+      <b-button
+        size="sm"
+        variant="danger"
+        :disabled="!actions.selected.length"
+        v-role="[app.masteradmin]"
+        @click="deleteSelected"
+      >
+        <i class="fas fa-trash"></i>
+        <span>Delete Selected</span>
+      </b-button>
+      <pagination :data="users" @pagination-change-page="getUsers" :limit="2" />
     </content-body>
   </content-wrapper>
 </template>
 
 <script>
-import { User, Role } from '@/api';
+import { User, Role } from '@/api/access';
 import { role } from '@/directives';
 import to from '@/utils/async-await';
+import { hasRole } from '@/utils/role-permission';
 import { alertConfirm, toastLoader, toastSuccess } from '@/utils/alert';
 import * as UsersComponents from './components';
 
@@ -79,7 +88,7 @@ export default {
       },
       filter: {
         search: null,
-        roles: [{ value: null, text: 'All Roles' }],
+        roles: [{ value: null, text: 'All roles' }],
         role: null,
       },
     };
@@ -99,12 +108,12 @@ export default {
       this.loading = false;
     },
     async reloadData() {
-      this.clearTable();
       const res = await User.list({ page: this.page });
       if (res.data.length === 0 && this.page > 1) {
         this.page--;
         this.reloadData();
       }
+      this.clearTable();
       this.users = res;
     },
     async getRoles() {
@@ -116,24 +125,23 @@ export default {
       });
     },
     async deleteUser(user) {
+      const id = user.id;
       const res = await alertConfirm('Delete User?', 'This is irreversible!');
+
       if (res.value) {
         toastLoader('Deleting User...');
 
-        let users = this.users.data;
-        Object.values(users).forEach(async (item, index) => {
-          if (item.id === user.id) {
-            item.status = 'deleting';
-            this.users.data.splice(index, 1, item);
+        const index = this.users.data.findIndex((user) => user.id == id);
+        const user = this.users.data[index];
+        user.status = 'deleting';
+        this.users.data.splice(index, 1, user);
 
-            const [err] = await to(User.destroy(user.id));
-            if (!err) {
-              this.reloadData();
-              this.users.data.splice(index, 1);
-              toastSuccess('User has been deleted successfully');
-            }
-          }
-        });
+        const [err] = await to(User.destroy(id));
+        if (!err) {
+          this.reloadData();
+          this.users.data.splice(index, 1);
+          toastSuccess('User has been deleted successfully');
+        }
       }
     },
     async deleteSelected() {
@@ -147,23 +155,21 @@ export default {
       if (res.value) {
         toastLoader('Deleting User/s...');
 
-        let users = this.users.data;
-        await Object.values(users).forEach(async (user, index) => {
-          if (this.actions.selected.includes(user.id)) {
+        const ids = this.actions.selected;
+        console.log(ids);
+
+        this.users.data.map((user, index) => {
+          if (ids.includes(user.id)) {
             user.status = 'deleting';
             this.users.data.splice(index, 1, user);
-
-            const [err] = await to(User.destroy(user.id));
-            if (!err) {
-              this.users.data.splice(index, 1);
-              this.actions.selected.shift();
-            }
-            if (!this.actions.selected.length) {
-              this.reloadData();
-              toastSuccess('User/s has been deleted successfully');
-            }
           }
         });
+
+        const [err] = await to(User.massDestroy(ids));
+        if (!err) {
+          this.reloadData();
+          toastSuccess('User/s has been deleted successfully');
+        }
       }
     },
     clearTable() {
@@ -173,6 +179,7 @@ export default {
         this.$refs.table.selected = [];
       }
     },
+    hasRole,
   },
   created() {
     this.getUsers();

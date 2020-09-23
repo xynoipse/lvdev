@@ -8,7 +8,7 @@
     hide-footer
     centered
   >
-    <permissions-form ref="form" :data="data" />
+    <user-permissions-form ref="form" :data="data" />
     <div id="modal-btn">
       <b-button :disabled="disabled" @click="close">Cancel</b-button>
       <b-button
@@ -22,15 +22,15 @@
 </template>
 
 <script>
-import User from '@/api/user';
+import User from '@/api/access/user';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import PermissionsForm from './PermissionsForm';
+import UserPermissionsForm from './forms/UserPermissionsForm';
 
 export default {
   name: 'UserPermissions',
   components: {
-    PermissionsForm,
+    UserPermissionsForm,
   },
   props: {
     data: {},

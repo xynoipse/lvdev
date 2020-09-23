@@ -22,11 +22,11 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.masteradmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.superadmin]" />
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.masteradmin]" />
     </template>
 
     <template v-slot:cell(actions)="row">
@@ -35,20 +35,25 @@
           <i class="fas fa-pencil-alt"></i>
           <span>Edit</span>
         </b-button>
-        <b-button
-          variant="info"
-          size="sm"
-          v-if="!row.item.role.includes(app.admin)"
-          v-b-modal.user-permissions
-          @click="edit(row)"
-        >
-          <i class="fas fa-pencil-alt"></i>
-          <span>Permissions</span>
-        </b-button>
-        <b-button v-role="[app.superadmin]" variant="danger" size="sm" @click="destroy(row)">
+
+        <b-button v-role="[app.masteradmin]" variant="danger" size="sm" @click="destroy(row)">
           <i class="fas fa-trash"></i>
           <span>Delete</span>
         </b-button>
+
+        <b-dropdown text="More" size="sm" v-if="showMoreButton(row)">
+          <b-dropdown-item
+            v-if="showUpdatePermission(row)"
+            v-b-modal.user-permissions
+            @click="edit(row)"
+          >Update Permissions</b-dropdown-item>
+
+          <b-dropdown-item
+            v-role="[app.masteradmin]"
+            v-b-modal.user-password
+            @click="edit(row)"
+          >Change Password</b-dropdown-item>
+        </b-dropdown>
       </div>
     </template>
   </b-table>
@@ -56,6 +61,7 @@
 
 <script>
 import { role } from '@/directives';
+import { hasRole } from '@/utils/role-permission';
 
 export default {
   name: 'UserTable',
@@ -100,6 +106,16 @@ export default {
       if (item.status === 'deleting')
         return 'text-muted table-danger table-disabled';
     },
+    showUpdatePermission(row) {
+      return !row.item.role.includes(this.app.admin);
+    },
+    showMoreButton(row) {
+      return this.showUpdatePermission(row) || hasRole([this.app.masteradmin]);
+    },
+    hasRole,
+  },
+  mounted() {
+    if (!hasRole([this.app.masteradmin])) this.fields.shift();
   },
   watch: {
     selected(newVal, oldVal) {

@@ -32,6 +32,7 @@
 
           <b-form-group label="Password" label-cols-sm="2" label-for="password">
             <password
+              class="mb-2"
               size="24"
               v-if="password"
               v-model="user.password"
@@ -46,6 +47,13 @@
                 <strong v-text="errors.password[0]"></strong>
               </span>
             </password>
+            <b-form-input
+              v-if="password"
+              type="password"
+              autocomplete="password"
+              placeholder="Confirm Password"
+              v-model="user.password_confirmation"
+            />
             <b-button
               variant="outline-danger"
               v-if="!password"
@@ -63,7 +71,7 @@
 
 <script>
 import { auth } from '@/api/auth';
-import User from '@/api/user';
+import User from '@/api/access/user';
 import to from '@/utils/async-await';
 import eventBus from '@/utils/event-bus.js';
 import { toastLoader, toastSuccess } from '@/utils/alert';
@@ -89,12 +97,15 @@ export default {
     async getUser() {
       const [err, res] = await to(auth());
       const { id, name, email } = res.data;
-      this.user = { id, name, email, password: null };
+      this.user = { id, name, email };
       this.loading = false;
     },
     async updateProfile() {
       const password = this.user.password;
-      if (!password) this.password = false;
+      if (!password) {
+        this.clearPassword();
+        this.password = false;
+      }
 
       this.loading = true;
       toastLoader('Updating Profile...');
@@ -113,8 +124,12 @@ export default {
       toastSuccess('Profile has been updated successfully');
     },
     resetPassword() {
-      if (this.password) this.user.password = null;
+      if (this.password) this.clearPassword();
       this.password = !this.password;
+    },
+    clearPassword() {
+      delete this.user.password;
+      delete this.user.password_confirmation;
     },
     clearErrors(field = null) {
       if (field) return (this.errors[field] = null);

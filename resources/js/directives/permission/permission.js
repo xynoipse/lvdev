@@ -11,14 +11,13 @@ export default {
       const requiredPermissions = value;
       const roles = user.roles;
       const permissions = user.permissions;
-      const superadmin = roles.includes(app.superadmin);
       const admin = roles.includes(app.admin);
 
       const hasPermission = permissions.some(permission => {
         return requiredPermissions.includes(permission);
       });
 
-      if (!superadmin && !admin && !hasPermission) {
+      if (!admin && !hasPermission) {
         el.parentNode && el.parentNode.removeChild(el);
       }
     } else {

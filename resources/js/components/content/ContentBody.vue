@@ -1,6 +1,6 @@
 <template>
   <section class="content">
-    <b-container fluid>
+    <b-container fluid class="pb-2">
       <slot></slot>
     </b-container>
   </section>
@@ -8,6 +8,6 @@
 
 <script>
 export default {
-  name: 'ContentBody'
+  name: 'ContentBody',
 };
 </script>

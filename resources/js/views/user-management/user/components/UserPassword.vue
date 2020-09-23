@@ -1,7 +1,7 @@
 <template>
   <b-modal
-    id="permission-edit"
-    title="Edit Permission"
+    id="user-password"
+    :title="`Change Password - ${data.name}`"
     :no-close-on-backdrop="disabled"
     :no-close-on-esc="disabled"
     hide-header-close
@@ -9,25 +9,25 @@
     centered
   >
     <form @submit.stop.prevent="update">
-      <permission-form ref="form" :data="data" />
+      <password-form ref="form" />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
-        <b-button type="submit" variant="primary" :disabled="disabled">Update Permission</b-button>
+        <b-button type="submit" variant="primary" :disabled="disabled">Update Password</b-button>
       </div>
     </form>
   </b-modal>
 </template>
 
 <script>
-import Permission from '@/api/access/permission';
+import User from '@/api/access/user';
 import to from '@/utils/async-await';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import PermissionForm from './forms/PermissionForm';
+import PasswordForm from './forms/PasswordForm';
 
 export default {
-  name: 'PermissionEdit',
+  name: 'UserPassword',
   components: {
-    PermissionForm,
+    PasswordForm,
   },
   props: {
     data: {},
@@ -41,13 +41,13 @@ export default {
     async update() {
       const form = this.$refs.form;
       const id = this.data.id;
-      const data = form.$data.permission;
+      const data = form.$data.user;
 
       form.clearErrors();
       this.toggleDisable();
 
-      toastLoader('Updating Permission...');
-      const [err, res] = await to(Permission.update(id, data));
+      toastLoader('Updating Password...');
+      const [err, res] = await to(User.updatePassword(id, data));
       if (err) {
         form.$data.errors = err.response.data.errors;
         return this.toggleDisable();
@@ -56,14 +56,14 @@ export default {
       this.$emit('update');
       this.toggleDisable();
       this.close();
-      toastSuccess('Permission has been updated successfully');
+      toastSuccess('Changed password successfully');
     },
     toggleDisable() {
       this.disabled = !this.disabled;
       this.$refs.form.toggleLoading();
     },
     close() {
-      this.$bvModal.hide('permission-edit');
+      this.$bvModal.hide('user-password');
       this.disabled = false;
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();

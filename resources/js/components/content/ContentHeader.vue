@@ -24,7 +24,13 @@ export default {
   name: 'ContentHeader',
   props: {
     title: { type: String },
-    parent: { type: String }
-  }
+    parent: { type: String },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.content-header {
+  padding-bottom: 0rem;
+}
+</style>

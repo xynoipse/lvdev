@@ -1,37 +1,38 @@
 <template>
   <content-wrapper v-role="[app.admin]">
     <content-header title="Permissions" parent="User Management">
-      <div v-if="hasRole([app.superadmin])">
-        <b-button variant="primary" v-b-modal.permission-create>Add Permission</b-button>
+      <div v-if="hasRole([app.masteradmin])">
         <permission-create @store="reloadData" />
         <permission-edit :data="permission" @update="reloadData" />
       </div>
     </content-header>
     <content-body>
-      <b-form id="search-box" @submit.prevent="getPermissions">
-        <b-input-group>
-          <b-form-input v-model="filter.search" placeholder="Search" />
-          <b-input-group-append>
-            <b-button type="submit" variant="default">
-              <i class="fas fa-search"></i>
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form>
+      <b-row>
+        <b-col sm="6">
+          <b-button
+            variant="primary"
+            v-b-modal.permission-create
+            v-role="[app.masteradmin]"
+          >Add Permission</b-button>
+        </b-col>
 
-      <div id="table-nav">
-        <b-button
-          variant="danger"
-          :disabled="!actions.selected.length"
-          v-role="[app.superadmin]"
-          @click="deleteSelected"
-        >
-          <i class="fas fa-trash"></i>
-          <span>Delete Selected</span>
-        </b-button>
-      </div>
+        <b-col sm="6">
+          <b-form id="search-box" class="mt-sm-0 mt-2" @submit.prevent="getPermissions">
+            <b-input-group>
+              <b-form-input v-model="filter.search" placeholder="Search" />
+              <b-input-group-append>
+                <b-button type="submit" variant="default">
+                  <i class="fas fa-search"></i>
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form>
+        </b-col>
+      </b-row>
 
-      <b-card class="w-100" no-body>
+      <div id="filters"></div>
+
+      <b-card class="w-100 mb-2" no-body>
         <b-card-header>
           <b-card-title title="Permission List" />
         </b-card-header>
@@ -47,18 +48,25 @@
           />
         </b-card-body>
       </b-card>
-      <pagination
-        :data="permissions"
-        @pagination-change-page="getPermissions"
-        :limit="4"
-        align="center"
-      />
+
+      <b-button
+        size="sm"
+        variant="danger"
+        :disabled="!actions.selected.length"
+        v-role="[app.masteradmin]"
+        @click="deleteSelected"
+      >
+        <i class="fas fa-trash"></i>
+        <span>Delete Selected</span>
+      </b-button>
+
+      <pagination :data="permissions" @pagination-change-page="getPermissions" :limit="2" />
     </content-body>
   </content-wrapper>
 </template>
 
 <script>
-import Permission from '@/api/permission';
+import Permission from '@/api/access/permission';
 import { role } from '@/directives';
 import to from '@/utils/async-await';
 import { hasRole } from '@/utils/role-permission';
@@ -95,15 +103,17 @@ export default {
       this.loading = false;
     },
     async reloadData() {
-      this.clearTable();
       const res = await Permission.list({ page: this.page });
-      if (res.data.length === 0) {
+      if (res.data.length === 0 && this.page > 1) {
         this.page--;
         this.reloadData();
       }
+      this.clearTable();
       this.permissions = res;
     },
     async deletePermission(permission) {
+      const id = permission.id;
+
       const res = await alertConfirm(
         'Delete Permission?',
         'This is irreversible!'
@@ -112,20 +122,19 @@ export default {
       if (res.value) {
         toastLoader('Deleting Permission...');
 
-        let permissions = this.permissions.data;
-        Object.values(permissions).forEach(async (item, index) => {
-          if (item.id === permission.id) {
-            item.status = 'deleting';
-            this.permissions.data.splice(index, 1, item);
+        const index = this.permissions.data.findIndex(
+          (permission) => permission.id == id
+        );
+        const permission = this.permissions.data[index];
+        permission.status = 'deleting';
+        this.permissions.data.splice(index, 1, permission);
 
-            const [err] = await to(Permission.destroy(permission.id));
-            if (!err) {
-              this.reloadData();
-              this.permissions.data.splice(index, 1);
-              toastSuccess('Permission has been deleted successfully');
-            }
-          }
-        });
+        const [err] = await to(Permission.destroy(id));
+        if (!err) {
+          this.reloadData();
+          this.permissions.data.splice(index, 1);
+          toastSuccess('Permission has been deleted successfully');
+        }
       }
     },
     async deleteSelected() {
@@ -139,23 +148,21 @@ export default {
       if (res.value) {
         toastLoader('Deleting Permission/s...');
 
-        let permissions = this.permissions.data;
-        await Object.values(permissions).forEach(async (permission, index) => {
-          if (this.actions.selected.includes(permission.id)) {
+        const ids = this.actions.selected;
+        console.log(ids);
+
+        this.permissions.data.map((permission, index) => {
+          if (ids.includes(permission.id)) {
             permission.status = 'deleting';
             this.permissions.data.splice(index, 1, permission);
-
-            const [err] = await to(Permission.destroy(permission.id));
-            if (!err) {
-              this.permissions.data.splice(index, 1);
-              this.actions.selected.shift();
-            }
-            if (!this.actions.selected.length) {
-              this.reloadData();
-              toastSuccess('Permission/s has been deleted successfully');
-            }
           }
         });
+
+        const [err] = await to(Permission.massDestroy(ids));
+        if (!err) {
+          this.reloadData();
+          toastSuccess('Permission/s has been deleted successfully');
+        }
       }
     },
     clearTable() {

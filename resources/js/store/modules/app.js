@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 
 const state = {
   name: process.env.MIX_APP_NAME,
-  superadmin: 'superadmin',
+  masteradmin: 'masteradmin',
   admin: 'admin',
   sidebar: {
     status: Cookies.get('sidebarStatus') ? !!+Cookies.get('sidebarStatus') : true,

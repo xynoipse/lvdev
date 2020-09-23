@@ -8,6 +8,7 @@
         v-model="permission.name"
         :class="{ 'is-invalid': errors.name }"
         @input="clearErrors('name')"
+        autofocus
       />
       <span v-if="errors.name" class="invalid-feedback" role="alert">
         <strong v-text="errors.name[0]"></strong>
@@ -19,21 +20,21 @@
 </template>
 
 <script>
-import Permission from '@/api/permission';
+import Permission from '@/api/access/permission';
 import to from '@/utils/async-await';
 
 export default {
   name: 'PermissionForm',
   props: {
-    data: { type: Object }
+    data: { type: Object },
   },
   data() {
     return {
       permission: {
-        name: null
+        name: null,
       },
       loading: true,
-      errors: {}
+      errors: {},
     };
   },
   methods: {
@@ -52,17 +53,17 @@ export default {
       this.loading = !this.loading;
     },
     clearInput() {
-      Object.keys(this.permission).forEach(key => {
+      Object.keys(this.permission).forEach((key) => {
         this.permission[key] = null;
       });
     },
     clearErrors(field = null) {
       if (field) return (this.errors[field] = null);
       this.errors = {};
-    }
+    },
   },
   mounted() {
     this.getPermission();
-  }
+  },
 };
 </script>

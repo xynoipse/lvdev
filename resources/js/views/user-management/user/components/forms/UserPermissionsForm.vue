@@ -1,7 +1,7 @@
 <template>
-  <b-row id="permissions-form">
+  <b-row id="user-permissions-form">
     <b-col cols="6" class="permission-col">
-      <h5>Inherited from Role</h5>
+      <h5>Role Permissions</h5>
       <b-form-group>
         <b-form-checkbox-group
           id="role-permissions"
@@ -28,12 +28,11 @@
 </template>
 
 <script>
-import User from '@/api/user';
-import Permission from '@/api/permission';
+import { User, Permission } from '@/api/access';
 import to from '@/utils/async-await';
 
 export default {
-  name: 'PermissionsForm',
+  name: 'UserPermissionsForm',
   props: {
     data: { type: Object },
   },
@@ -88,13 +87,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#permissions-form {
+#user-permissions-form {
   .permission-col {
-    min-height: 10rem;
+    height: auto;
     max-height: 20rem;
-    .form-group {
+    #role-permissions,
+    #permissions {
       overflow-y: auto;
-      height: 90%;
+      max-height: 18rem;
     }
   }
 }

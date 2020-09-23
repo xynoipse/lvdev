@@ -1,38 +1,35 @@
 <template>
   <content-wrapper v-role="[app.admin]">
     <content-header title="Roles" parent="Access Control">
-      <div v-if="hasRole([app.superadmin])">
-        <b-button variant="primary" v-b-modal.role-create>Add Role</b-button>
+      <div v-if="hasRole([app.masteradmin])">
         <role-create @store="reloadData" />
         <role-edit :data="role" @update="reloadData" />
       </div>
       <role-permissions :data="role" @update="reloadData" />
     </content-header>
     <content-body>
-      <b-form id="search-box" @submit.prevent="getRoles">
-        <b-input-group>
-          <b-form-input v-model="filter.search" placeholder="Search" />
-          <b-input-group-append>
-            <b-button type="submit" variant="default">
-              <i class="fas fa-search"></i>
-            </b-button>
-          </b-input-group-append>
-        </b-input-group>
-      </b-form>
+      <b-row>
+        <b-col sm="6">
+          <b-button variant="primary" v-b-modal.role-create v-role="[app.masteradmin]">Add Role</b-button>
+        </b-col>
 
-      <div id="table-nav">
-        <b-button
-          variant="danger"
-          :disabled="!actions.selected.length"
-          v-role="[app.superadmin]"
-          @click="deleteSelected"
-        >
-          <i class="fas fa-trash"></i>
-          <span>Delete Selected</span>
-        </b-button>
-      </div>
+        <b-col sm="6">
+          <b-form id="search-box" class="mt-sm-0 mt-2" @submit.prevent="getRoles">
+            <b-input-group>
+              <b-form-input v-model="filter.search" placeholder="Search" />
+              <b-input-group-append>
+                <b-button type="submit" variant="default">
+                  <i class="fas fa-search"></i>
+                </b-button>
+              </b-input-group-append>
+            </b-input-group>
+          </b-form>
+        </b-col>
+      </b-row>
 
-      <b-card class="w-100" no-body>
+      <div id="filters"></div>
+
+      <b-card class="w-100 mb-2" no-body>
         <b-card-header>
           <b-card-title title="Role List" />
         </b-card-header>
@@ -49,13 +46,24 @@
         </b-card-body>
       </b-card>
 
-      <pagination :data="roles" @pagination-change-page="getRoles" :limit="4" align="center" />
+      <b-button
+        size="sm"
+        variant="danger"
+        :disabled="!actions.selected.length"
+        v-role="[app.masteradmin]"
+        @click="deleteSelected"
+      >
+        <i class="fas fa-trash"></i>
+        <span>Delete Selected</span>
+      </b-button>
+
+      <pagination :data="roles" @pagination-change-page="getRoles" :limit="2" />
     </content-body>
   </content-wrapper>
 </template>
 
 <script>
-import Role from '@/api/role';
+import Role from '@/api/access/role';
 import { role } from '@/directives';
 import to from '@/utils/async-await';
 import { hasRole } from '@/utils/role-permission';
@@ -92,34 +100,32 @@ export default {
       this.loading = false;
     },
     async reloadData() {
-      this.clearTable();
       const res = await Role.list({ page: this.page });
-      if (res.data.length === 0) {
+      if (res.data.length === 0 && this.page > 1) {
         this.page--;
         this.reloadData();
       }
+      this.clearTable();
       this.roles = res;
     },
     async deleteRole(role) {
+      const id = role.id;
       const res = await alertConfirm('Delete Role?', 'This is irreversible!');
 
       if (res.value) {
         toastLoader('Deleting Role...');
 
-        let roles = this.roles.data;
-        Object.values(roles).forEach(async (item, index) => {
-          if (item.id === role.id) {
-            item.status = 'deleting';
-            this.roles.data.splice(index, 1, item);
+        const index = this.roles.data.findIndex((role) => role.id == id);
+        const role = this.roles.data[index];
+        role.status = 'deleting';
+        this.roles.data.splice(index, 1, role);
 
-            const [err] = await to(Role.destroy(role.id));
-            if (!err) {
-              this.reloadData();
-              this.roles.data.splice(index, 1);
-              toastSuccess('Role has been deleted successfully');
-            }
-          }
-        });
+        const [err] = await to(Role.destroy(id));
+        if (!err) {
+          this.reloadData();
+          this.roles.data.splice(index, 1);
+          toastSuccess('Role has been deleted successfully');
+        }
       }
     },
     async deleteSelected() {
@@ -133,23 +139,21 @@ export default {
       if (res.value) {
         toastLoader('Deleting Role/s...');
 
-        let roles = this.roles.data;
-        await Object.values(roles).forEach(async (role, index) => {
-          if (this.actions.selected.includes(role.id)) {
+        const ids = this.actions.selected;
+        console.log(ids);
+
+        this.roles.data.map((role, index) => {
+          if (ids.includes(role.id)) {
             role.status = 'deleting';
             this.roles.data.splice(index, 1, role);
-
-            const [err] = await to(Role.destroy(role.id));
-            if (!err) {
-              this.roles.data.splice(index, 1);
-              this.actions.selected.shift();
-            }
-            if (!this.actions.selected.length) {
-              this.reloadData();
-              toastSuccess('Role/s has been deleted successfully');
-            }
           }
         });
+
+        const [err] = await to(Role.massDestroy(ids));
+        if (!err) {
+          this.reloadData();
+          toastSuccess('Role/s has been deleted successfully');
+        }
       }
     },
     clearTable() {

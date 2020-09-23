@@ -45,6 +45,14 @@ class Resource {
       method: 'delete',
     });
   }
+
+  massDestroy(ids) {
+    return request({
+      url: `/${this.uri}`,
+      method: 'delete',
+      data: { ids },
+    });
+  }
 }
 
 export { Resource as default };

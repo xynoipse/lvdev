@@ -9,12 +9,7 @@
     centered
   >
     <form @submit.stop.prevent="update">
-      <user-form
-        ref="form"
-        :data="data"
-        :resetpwd="hasRole([app.superadmin])"
-        :nopwd="!hasRole([app.superadmin])"
-      />
+      <user-form ref="form" :data="data" nopwd />
       <div id="modal-btn">
         <b-button :disabled="disabled" @click="close">Cancel</b-button>
         <b-button type="submit" variant="primary" :disabled="disabled">Update User</b-button>
@@ -24,11 +19,10 @@
 </template>
 
 <script>
-import User from '@/api/user';
+import User from '@/api/access/user';
 import to from '@/utils/async-await';
-import { hasRole } from '@/utils/role-permission';
 import { toastLoader, toastSuccess } from '@/utils/alert';
-import UserForm from './UserForm';
+import UserForm from './forms/UserForm';
 
 export default {
   name: 'UserEdit',
@@ -74,7 +68,6 @@ export default {
       this.$refs.form.clearErrors();
       this.$refs.form.clearInput();
     },
-    hasRole,
   },
 };
 </script>

@@ -22,14 +22,14 @@
     </template>
 
     <template v-slot:head(selected)>
-      <b-form-checkbox v-model="allSelected" v-role="[app.superadmin]" @change="toggleAll" />
+      <b-form-checkbox v-model="allSelected" v-role="[app.masteradmin]" @change="toggleAll" />
     </template>
 
     <template v-slot:cell(selected)="row">
-      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.superadmin]" />
+      <b-form-checkbox v-model="selected" :value="row.item.id" v-role="[app.masteradmin]" />
     </template>
 
-    <template v-slot:cell(actions)="row" v-if="hasRole([app.superadmin])">
+    <template v-slot:cell(actions)="row" v-if="hasRole([app.masteradmin])">
       <div class="btn-actions">
         <b-button variant="primary" size="sm" v-b-modal.permission-edit @click="edit(row)">
           <i class="fas fa-pencil-alt"></i>
@@ -90,6 +90,9 @@ export default {
         return 'text-muted table-danger table-disabled';
     },
     hasRole,
+  },
+  mounted() {
+    if (!hasRole([this.app.masteradmin])) this.fields.shift();
   },
   watch: {
     selected(newVal, oldVal) {

@@ -11,16 +11,15 @@ export function hasRole(value) {
   if (value && value instanceof Array && value.length > 0) {
     const requiredRoles = value;
     const [roles] = getUserAccess(user);
-    let [superadmin, admin] = isRoleAdmin(roles);
+    let admin = roles.includes(app.admin);
 
-    if (requiredRoles.includes(app.superadmin)) admin = false;
-    if (superadmin || admin) return true;
+    if (requiredRoles.includes(app.masteradmin)) admin = user.id === 1 && admin;
 
     const hasRole = roles.some(role => {
       return requiredRoles.includes(role);
     });
 
-    return hasRole;
+    return admin || hasRole;
   } else {
     console.error(`Need roles! Like hasRole(['admin', 'user'])`);
     return false;
@@ -35,15 +34,13 @@ export function hasPermission(value) {
   if (value && value instanceof Array && value.length > 0) {
     const requiredPermissions = value;
     const [roles, permissions] = getUserAccess(user);
-    const [superadmin, admin] = isRoleAdmin(roles);
-
-    if (superadmin || admin) return true;
+    const admin = roles.includes(app.admin);
 
     const hasPermission = permissions.some(permission => {
       return requiredPermissions.includes(permission);
     });
 
-    return hasPermission;
+    return admin || hasPermission;
   } else {
     console.error(`Need permissions! Like hasPermission(['view posts', 'create posts'])`);
     return false;
@@ -51,15 +48,8 @@ export function hasPermission(value) {
 }
 
 function getUserAccess(user) {
-  const roles = user.roles;
-  const permissions = user.permissions;
+  const roles = user.roles.map(role => role.toLowerCase());
+  const permissions = user.permissions.map(permission => permission.toLowerCase());
 
   return [roles, permissions];
-}
-
-function isRoleAdmin(roles) {
-  const superadmin = roles.includes(app.superadmin);
-  const admin = roles.includes(app.admin);
-
-  return [superadmin, admin];
 }

@@ -8,6 +8,11 @@
       :class="error"
       @input="handleData"
     />
+    <span
+      class="fa fa-fw field-icon"
+      :class="[{'fa-eye' : this.type === 'password'}, {'fa-eye-slash': this.type === 'text'}]"
+      @click="changeType"
+    ></span>
     <span class="input-group-append">
       <b-button variant="primary" :disabled="disabled" @click="generate">
         <i class="fa fa-sync-alt"></i>
@@ -22,21 +27,22 @@
 export default {
   name: 'Password',
   props: {
-    type: { type: String, default: 'text' },
     size: { type: String, default: '32' },
     characters: { type: String, default: 'a-z,A-Z,0-9,#' },
     placeholder: { type: String, default: 'Password' },
     disabled: { type: Boolean, default: false },
     error: { type: Object },
-    value: ''
+    value: '',
   },
   data() {
     return {
-      password: this.value
+      password: this.value,
+      type: 'password',
     };
   },
   methods: {
     generate() {
+      this.type = 'text';
       let charactersArray = this.characters.split(',');
       let CharacterSet = '';
       let password = '';
@@ -62,9 +68,30 @@ export default {
       this.password = password;
       this.handleData();
     },
+    changeType() {
+      if (this.type === 'password') return (this.type = 'text');
+      return (this.type = 'password');
+    },
     handleData() {
       this.$emit('input', this.password);
-    }
-  }
+    },
+  },
 };
 </script>
+
+<style lang="scss" scoped>
+.form-control {
+  padding-right: 1.75rem;
+}
+.is-invalid {
+  background-image: unset !important;
+}
+.field-icon {
+  cursor: pointer;
+  float: right;
+  width: 2rem;
+  z-index: 3;
+  margin-left: -1.95rem;
+  margin-top: 0.75rem;
+}
+</style>
