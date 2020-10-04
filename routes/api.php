@@ -27,6 +27,6 @@ Route::namespace('Domains')->group(function () {
      * Admin Routes
      */
     Route::middleware('auth:sanctum')->group(function () {
-        includeRouteFiles(__DIR__ . '/Admin/');
+        includeRouteFiles(__DIR__ . '/admin');
     });
 });
